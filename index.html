@@ -114,27 +114,55 @@
             text-overflow: ellipsis;
         }
 
-        /* Speed Controls Overlay */
-        .speed-overlay {
+        /* Settings Menu */
+        .settings-container {
+            position: relative;
+            margin-left: 10px;
+        }
+
+        .speed-menu {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            bottom: 100%;
+            right: 0;
+            background: rgba(20, 26, 58, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            width: 200px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 20;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .speed-menu.active {
             display: flex;
-            gap: 6px;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 8px 12px;
-            border-radius: 25px;
-            z-index: 10;
+        }
+
+        .speed-menu-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .speed-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
         .speed-btn {
-            width: 48px;
-            height: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 11px;
+            width: 100%;
+            height: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -147,6 +175,7 @@
         .speed-btn:hover {
             border-color: #00d4ff;
             color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
         }
 
         .speed-btn.active {
@@ -330,11 +359,6 @@
                 margin: 0;
             }
 
-            .speed-overlay {
-                transform: scale(0.8);
-                transform-origin: top right;
-            }
-
             .playlist-modal {
                 width: 90%;
                 max-height: 70vh;
@@ -349,16 +373,6 @@
         <div class="panel video-panel">
             <div style="position: relative; flex: 1;">
                 <div id="player"></div>
-
-                <!-- Speed Controls -->
-                <div class="speed-overlay">
-                    <button class="speed-btn" data-speed="0.5">0.5x</button>
-                    <button class="speed-btn" data-speed="0.75">0.75x</button>
-                    <button class="speed-btn active" data-speed="1">1x</button>
-                    <button class="speed-btn" data-speed="1.25">1.25x</button>
-                    <button class="speed-btn" data-speed="1.5">1.5x</button>
-                    <button class="speed-btn" data-speed="2">2x</button>
-                </div>
             </div>
 
             <!-- Next Video Bar -->
@@ -369,6 +383,24 @@
                 <div class="next-info">
                     <span class="next-label">다음:</span>
                     <span class="next-title" id="nextTitle">-</span>
+                </div>
+
+                <!-- Settings Menu -->
+                <div class="settings-container">
+                    <button class="btn-icon" onclick="toggleSpeedMenu()" title="재생 속도 설정">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                    <div class="speed-menu" id="speedMenu">
+                        <div class="speed-menu-title">재생 속도</div>
+                        <div class="speed-options">
+                            <button class="speed-btn" data-speed="0.5">0.5x</button>
+                            <button class="speed-btn" data-speed="0.75">0.75x</button>
+                            <button class="speed-btn active" data-speed="1">1x</button>
+                            <button class="speed-btn" data-speed="1.25">1.25x</button>
+                            <button class="speed-btn" data-speed="1.5">1.5x</button>
+                            <button class="speed-btn" data-speed="2">2x</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -603,7 +635,25 @@
 
         function togglePlaylist() {
             document.getElementById('playlistModal').classList.toggle('active');
+            // Close speed menu if open
+            document.getElementById('speedMenu').classList.remove('active');
         }
+
+        function toggleSpeedMenu() {
+            document.getElementById('speedMenu').classList.toggle('active');
+            // Close playlist if open
+            document.getElementById('playlistModal').classList.remove('active');
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function (event) {
+            const speedMenu = document.getElementById('speedMenu');
+            const settingsBtn = event.target.closest('.settings-container');
+
+            if (!settingsBtn && speedMenu.classList.contains('active')) {
+                speedMenu.classList.remove('active');
+            }
+        });
 
         async function startWebcam() {
             try {
