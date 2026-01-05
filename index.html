@@ -114,10 +114,25 @@
             text-overflow: ellipsis;
         }
 
-        /* Settings Menu */
+        /* Speed Controls Overlay (Desktop) */
+        .speed-overlay {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 8px 12px;
+            border-radius: 25px;
+            z-index: 10;
+        }
+
+        /* Settings Menu (Mobile) */
         .settings-container {
             position: relative;
             margin-left: 10px;
+            display: none;
+            /* Hidden on desktop */
         }
 
         .speed-menu {
@@ -156,13 +171,12 @@
         }
 
         .speed-btn {
-            width: 100%;
-            height: 36px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
+            border-radius: 15px;
+            /* Default rounded */
             background: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.8);
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -170,6 +184,22 @@
             align-items: center;
             justify-content: center;
             padding: 0;
+        }
+
+        /* Desktop specific speed btn styles */
+        .speed-overlay .speed-btn {
+            width: 48px;
+            height: 30px;
+            border-radius: 15px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Mobile menu specific speed btn styles */
+        .speed-menu .speed-btn {
+            width: 100%;
+            height: 36px;
+            border-radius: 8px;
         }
 
         .speed-btn:hover {
@@ -347,21 +377,32 @@
                 height: 100vh;
             }
 
+            /* Hide desktop speed overlay on mobile */
+            .speed-overlay {
+                display: none;
+            }
+
+            /* Show settings menu on mobile */
+            .settings-container {
+                display: block;
+            }
+
             .controls {
                 width: 98%;
                 justify-content: center;
                 padding: 8px 4px;
                 bottom: 5px;
                 gap: 4px;
-                overflow-x: auto;
-                /* Allow scrolling if really needed */
+                /* Ensure buttons fit */
             }
 
             button {
-                padding: 8px;
+                padding: 6px;
+                /* Smaller padding */
                 font-size: 0;
                 /* Hide text on mobile */
-                min-width: 36px;
+                min-width: 32px;
+                /* Smaller min-width */
                 justify-content: center;
             }
 
@@ -385,6 +426,16 @@
         <div class="panel video-panel">
             <div style="position: relative; flex: 1;">
                 <div id="player"></div>
+
+                <!-- Speed Controls (Desktop Only) -->
+                <div class="speed-overlay">
+                    <button class="speed-btn" data-speed="0.5">0.5x</button>
+                    <button class="speed-btn" data-speed="0.75">0.75x</button>
+                    <button class="speed-btn active" data-speed="1">1x</button>
+                    <button class="speed-btn" data-speed="1.25">1.25x</button>
+                    <button class="speed-btn" data-speed="1.5">1.5x</button>
+                    <button class="speed-btn" data-speed="2">2x</button>
+                </div>
             </div>
 
             <!-- Next Video Bar -->
@@ -397,7 +448,7 @@
                     <span class="next-title" id="nextTitle">-</span>
                 </div>
 
-                <!-- Settings Menu -->
+                <!-- Settings Menu (Mobile Only) -->
                 <div class="settings-container">
                     <button class="btn-icon" onclick="toggleSpeedMenu()" title="재생 속도 설정">
                         <span class="material-symbols-outlined">settings</span>
