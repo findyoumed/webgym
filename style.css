@@ -331,74 +331,6 @@ body {
 
 /* ... (중략) ... */
 
-/* === Playlist Mobile Fix === */
-/* 모바일에서 플레이리스트가 화면을 가득 채우고 스크롤 되도록 */
-@media (max-width: 768px) {
-  .playlist-modal {
-    width: 90%;
-    max-height: 80vh;
-    left: 5%;
-    transform: translateX(0); /* 중앙 정렬 대신 여백 기준 */
-    top: 10%;
-    border-radius: 15px;
-  }
-  
-  .item-info {
-    font-size: 14px;
-    white-space: normal; /* 긴 제목 줄바꿈 허용 */
-    word-break: break-all;
-  }
-}
-
-.playlist-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255,255,255,0.05);
-    padding: 12px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.playlist-item.active {
-    border-color: #00d4ff;
-    background: rgba(0, 212, 255, 0.1);
-}
-
-.item-info {
-    flex: 1;
-    cursor: pointer;
-    margin-right: 10px;
-    font-size: 15px;
-}
-
-.item-actions {
-    display: flex;
-    gap: 5px;
-}
-
-.playlist-btn {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #aaa;
-    border-radius: 4px;
-    padding: 4px 8px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.playlist-btn:hover {
-    color: #fff;
-    border-color: #fff;
-    background: rgba(255,255,255,0.1);
-}
-
-.playlist-btn.delete-btn:hover {
-    color: #ff4444;
-    border-color: #ff4444;
-}
-
 /* =========================================
    Opacity Slider Styling (Conditional Colors)
    ========================================= */
@@ -612,6 +544,43 @@ input[type=range]::-webkit-slider-thumb {
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
   color: white;
+}
+
+/* 모바일에서 덮어쓴 데스크톱 모달 스타일을 재정의하여 화면 안에 꽉 차게 표시 */
+@media (max-width: 768px) {
+  .playlist-modal {
+    width: calc(100% - 24px);
+    max-height: calc(100vh - 24px);
+    left: 0;
+    right: 0;
+    top: 12px;
+    margin: 0 12px;
+    transform: none;
+    border-radius: 12px;
+    padding: 18px;
+    overflow-y: auto;
+  }
+
+  /* 헤더와 리스트가 겹치지 않고, 긴 제목이 잘리지 않도록 처리 */
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: rgba(20, 26, 58, 0.98);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    z-index: 1;
+  }
+
+  #playlistItems {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+  }
+
+  .item-info {
+    font-size: 14px;
+    white-space: normal;
+    word-break: break-word;
+  }
 }
 
 /* =========================================
