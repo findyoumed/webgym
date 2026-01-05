@@ -527,6 +527,23 @@ input[type=range]::-webkit-slider-thumb {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 }
 
+@media (max-width: 768px) {
+  .playlist-modal {
+    width: 100%;
+    left: 0;
+    top: 10%;
+    transform: none;
+    max-height: 80vh;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-y: auto;
+  }
+
+  #playlistItems {
+    overflow-y: auto;
+  }
+}
+
 .playlist-modal.active {
   display: block;
 }
