@@ -208,10 +208,11 @@
             display: flex;
             gap: 10px;
             background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
+            padding: 15px 20px;
             border-radius: 15px;
             align-items: center;
             z-index: 100;
+            white-space: nowrap;
         }
 
         button {
@@ -227,11 +228,17 @@
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         button:hover {
             background: #00b8e6;
             transform: translateY(-1px);
+        }
+
+        button.active {
+            background: #fff;
+            color: #00d4ff;
         }
 
         .btn-icon {
@@ -341,21 +348,26 @@
             }
 
             .controls {
-                width: 95%;
-                justify-content: space-between;
-                padding: 10px;
-                bottom: 10px;
-                gap: 5px;
+                width: 98%;
+                justify-content: center;
+                padding: 8px 4px;
+                bottom: 5px;
+                gap: 4px;
+                overflow-x: auto;
+                /* Allow scrolling if really needed */
             }
 
             button {
                 padding: 8px;
                 font-size: 0;
                 /* Hide text on mobile */
+                min-width: 36px;
+                justify-content: center;
             }
 
             button .material-symbols-outlined {
-                font-size: 24px;
+                font-size: 20px;
+                /* Smaller icons */
                 margin: 0;
             }
 
@@ -432,8 +444,11 @@
         <button onclick="togglePlaylist()">
             <span class="material-symbols-outlined">playlist_play</span>
         </button>
-        <button onclick="startWebcam()">
+        <button onclick="toggleWebcam()" id="webcamBtn" title="웹캠 켜기/끄기">
             <span class="material-symbols-outlined">videocam</span>
+        </button>
+        <button onclick="toggleFlip()" id="flipBtn" title="좌우 반전">
+            <span class="material-symbols-outlined">flip_camera_android</span>
         </button>
     </div>
 
@@ -460,6 +475,7 @@
         let player;
         let webcamStream;
         let currentIndex = 0;
+        let isFlipped = true; // Default to mirrored
 
         // Load playlist
         async function loadPlaylist() {
@@ -655,21 +671,55 @@
             }
         });
 
-        async function startWebcam() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { width: 1280, height: 720 },
-                    audio: false
-                });
+        async function toggleWebcam() {
+            const webcam = document.getElementById('webcam');
+            const btn = document.getElementById('webcamBtn');
+            const placeholder = document.getElementById('placeholder');
 
-                const webcam = document.getElementById('webcam');
-                webcam.srcObject = stream;
-                webcam.style.display = 'block';
-                document.getElementById('placeholder').style.display = 'none';
-                webcamStream = stream;
-                setStatus('웹캠 활성화');
-            } catch (error) {
-                alert('웹캠 권한 필요');
+            if (webcamStream) {
+                // Stop webcam
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+                webcam.srcObject = null;
+                webcam.style.display = 'none';
+                placeholder.style.display = 'flex';
+                placeholder.textContent = '웹캠이 꺼졌습니다';
+                btn.classList.remove('active');
+                setStatus('웹캠 꺼짐');
+            } else {
+                // Start webcam
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: 1280, height: 720 },
+                        audio: false
+                    });
+
+                    webcam.srcObject = stream;
+                    webcam.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    webcamStream = stream;
+                    btn.classList.add('active');
+                    setStatus('웹캠 켜짐');
+                } catch (error) {
+                    alert('웹캠 권한 필요');
+                    placeholder.textContent = '웹캠 권한 필요';
+                }
+            }
+        }
+
+        function toggleFlip() {
+            const webcam = document.getElementById('webcam');
+            const btn = document.getElementById('flipBtn');
+            isFlipped = !isFlipped;
+
+            if (isFlipped) {
+                webcam.style.transform = 'scaleX(-1)';
+                btn.classList.add('active');
+                setStatus('좌우 반전 켜짐');
+            } else {
+                webcam.style.transform = 'scaleX(1)';
+                btn.classList.remove('active');
+                setStatus('좌우 반전 꺼짐');
             }
         }
 
@@ -714,7 +764,7 @@
 
         // Initialize
         loadPlaylist();
-        startWebcam(); // Auto start webcam
+        toggleWebcam(); // Auto start webcam (using toggle function)
     </script>
 </body>
 
