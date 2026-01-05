@@ -183,6 +183,23 @@ function togglePlaylist() {
     const modal = document.getElementById('playlistModal');
     if (!modal) return;
     modal.classList.toggle('active');
+
+    // Close speed menu when playlist is toggled
+    const speedMenu = document.getElementById('speedMenu');
+    if (speedMenu) speedMenu.classList.remove('active');
+}
+
+function toggleSpeedMenu() {
+    const menu = document.getElementById('speedMenu');
+    if (!menu) return;
+
+    const isActive = menu.classList.toggle('active');
+
+    // Close playlist when speed menu is opened
+    if (isActive) {
+        const modal = document.getElementById('playlistModal');
+        if (modal) modal.classList.remove('active');
+    }
 }
 
 function toggleLayout() {
