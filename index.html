@@ -59,19 +59,25 @@
             align-items: center;
             gap: 10px;
             flex: 1;
-            justify-content: flex-end;
-            /* Right align text */
+            justify-content: flex-start;
+            /* Left align text next to button */
+            margin-left: 15px;
+            overflow: hidden;
         }
 
         .next-label {
             color: #00d4ff;
             font-weight: 600;
             font-size: 13px;
+            white-space: nowrap;
         }
 
         .next-title {
             color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Speed Controls Overlay */
@@ -85,25 +91,6 @@
             padding: 8px 12px;
             border-radius: 25px;
             z-index: 10;
-        }
-
-        /* Current Title Overlay */
-        .title-overlay {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 10px 20px;
-            border-radius: 25px;
-            z-index: 10;
-            font-weight: 600;
-            font-size: 16px;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 60%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .speed-btn {
@@ -309,12 +296,6 @@
                 margin: 0;
             }
 
-            .title-overlay {
-                font-size: 12px;
-                padding: 6px 12px;
-                max-width: 70%;
-            }
-
             .speed-overlay {
                 transform: scale(0.8);
                 transform-origin: top right;
@@ -334,9 +315,6 @@
         <div class="panel video-panel">
             <div style="position: relative; flex: 1;">
                 <div id="player"></div>
-
-                <!-- Current Title Overlay -->
-                <div class="title-overlay" id="currentTitle"></div>
 
                 <!-- Speed Controls -->
                 <div class="speed-overlay">
@@ -364,7 +342,7 @@
         <!-- Webcam Panel -->
         <div class="panel">
             <video id="webcam" style="display: none;" autoplay playsinline></video>
-            <div class="placeholder" id="placeholder">웹캠 시작 버튼을 눌러주세요</div>
+            <div class="placeholder" id="placeholder">웹캠 연결 중...</div>
         </div>
     </div>
 
@@ -419,41 +397,45 @@
 
         // Load playlist
         async function loadPlaylist() {
-            // Check localStorage first
-            const stored = localStorage.getItem('playlist');
-            let loadedFromStorage = false;
+            // Always try to load from txt file first to reflect file changes
+            try {
+                const response = await fetch('playlist.txt?t=' + new Date().getTime()); // Prevent caching
+                const text = await response.text();
 
-            if (stored) {
-                try {
-                    const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        playlist = parsed;
-                        console.log('Loaded from localStorage');
-                        loadedFromStorage = true;
-                    }
-                } catch (e) {
-                    console.error('Error parsing localStorage', e);
-                }
-            }
+                const filePlaylist = text.trim().split('\n')
+                    .filter(line => line.trim())
+                    .map(line => {
+                        const [id, title] = line.split('|');
+                        return { id: id.trim(), title: title ? title.trim() : id.trim() };
+                    });
 
-            if (!loadedFromStorage) {
-                // Load from txt file (default)
-                try {
-                    const response = await fetch('playlist.txt');
-                    const text = await response.text();
-
-                    playlist = text.trim().split('\n')
-                        .filter(line => line.trim())
-                        .map(line => {
-                            const [id, title] = line.split('|');
-                            return { id: id.trim(), title: title ? title.trim() : id.trim() };
-                        });
-
-                    // Save to localStorage
-                    savePlaylist();
+                if (filePlaylist.length > 0) {
+                    playlist = filePlaylist;
                     console.log('Loaded from playlist.txt');
-                } catch (error) {
-                    console.error('Error loading playlist:', error);
+                    // Update localStorage to match file
+                    savePlaylist();
+                } else {
+                    throw new Error('Empty playlist file');
+                }
+            } catch (error) {
+                console.log('Failed to load playlist.txt, checking localStorage', error);
+
+                // Fallback to localStorage
+                const stored = localStorage.getItem('playlist');
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            playlist = parsed;
+                            console.log('Loaded from localStorage');
+                        }
+                    } catch (e) {
+                        console.error('Error parsing localStorage', e);
+                    }
+                }
+
+                // Final fallback
+                if (playlist.length === 0) {
                     playlist = [{ id: '372ByJedKsY', title: '기본 비디오' }];
                 }
             }
@@ -547,7 +529,6 @@
             if (!player) return;
             currentIndex = index;
             player.loadVideoById(playlist[index].id);
-            document.getElementById('currentTitle').textContent = playlist[index].title;
             updatePlaylistUI();
             updateNextVideo();
             setStatus(`재생: ${playlist[index].title}`);
@@ -634,7 +615,6 @@
                     onReady: (e) => {
                         setStatus('준비 완료');
                         e.target.playVideo();
-                        document.getElementById('currentTitle').textContent = playlist[0]?.title || '';
                         updatePlaylistUI();
                         updateNextVideo();
                     },
@@ -650,6 +630,7 @@
 
         // Initialize
         loadPlaylist();
+        startWebcam(); // Auto start webcam
     </script>
 </body>
 
