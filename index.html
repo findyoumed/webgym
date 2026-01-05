@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>운동 따라하기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e27;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            gap: 2px;
+            background: #222;
+        }
+
+        .panel {
+            background: #000;
+            position: relative;
+        }
+
+        .video-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #player {
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Next Video Bar */
+        .next-video-bar {
+            background: rgba(20, 26, 58, 0.95);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .next-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: flex-end;
+            /* Right align text */
+        }
+
+        .next-label {
+            color: #00d4ff;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .next-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        /* Speed Controls Overlay */
+        .speed-overlay {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 8px 12px;
+            border-radius: 25px;
+            z-index: 10;
+        }
+
+        .speed-btn {
+            width: 48px;
+            height: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .speed-btn:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .speed-btn.active {
+            background: #00d4ff;
+            border-color: #00d4ff;
+            color: #000;
+        }
+
+        #webcam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #666;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            align-items: center;
+        }
+
+        button {
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #00b8e6;
+            transform: translateY(-1px);
+        }
+
+        .btn-icon {
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .status {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        /* Playlist Modal */
+        .playlist-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 26, 58, 0.98);
+            padding: 30px;
+            border-radius: 15px;
+            width: 650px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .playlist-modal.active {
+            display: block;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: transparent;
+            color: white;
+            padding: 5px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .playlist-item {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .playlist-item.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-left: 3px solid #00d4ff;
+        }
+
+        .item-info {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .delete-btn {
+            background: rgba(255, 0, 0, 0.3);
+            color: #ff5555;
+            padding: 8px 16px;
+        }
+
+        .add-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-family: inherit;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div class="status" id="status">로딩 중...</div> -->
+
+    <div class="container">
+        <!-- YouTube Panel -->
+        <div class="panel video-panel">
+            <div style="position: relative; flex: 1;">
+                <div id="player"></div>
+
+                <!-- Speed Controls -->
+                <div class="speed-overlay">
+                    <button class="speed-btn" data-speed="0.5">0.5x</button>
+                    <button class="speed-btn" data-speed="0.75">0.75x</button>
+                    <button class="speed-btn active" data-speed="1">1x</button>
+                    <button class="speed-btn" data-speed="1.25">1.25x</button>
+                    <button class="speed-btn" data-speed="1.5">1.5x</button>
+                    <button class="speed-btn" data-speed="2">2x</button>
+                </div>
+            </div>
+
+            <!-- Next Video Bar -->
+            <div class="next-video-bar">
+                <button class="btn-icon" onclick="skipToNext()" title="다음곡 바로가기">
+                    <span class="material-symbols-outlined">skip_next</span>
+                </button>
+                <div class="next-info">
+                    <span class="next-label">다음:</span>
+                    <span class="next-title" id="nextTitle">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Webcam Panel -->
+        <div class="panel">
+            <video id="webcam" style="display: none;" autoplay playsinline></video>
+            <div class="placeholder" id="placeholder">웹캠 시작 버튼을 눌러주세요</div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button onclick="playPrevious()" title="이전 비디오">
+            <span class="material-symbols-outlined">skip_previous</span>
+        </button>
+        <button onclick="seekBackward()" title="10초 뒤로">
+            <span class="material-symbols-outlined">replay_10</span>
+        </button>
+        <button onclick="togglePlay()">
+            <span class="material-symbols-outlined" id="playIcon">play_arrow</span>
+        </button>
+        <button onclick="seekForward()" title="10초 앞으로">
+            <span class="material-symbols-outlined">forward_10</span>
+        </button>
+        <button onclick="playNext()" title="다음 비디오">
+            <span class="material-symbols-outlined">skip_next</span>
+        </button>
+        <button onclick="togglePlaylist()">
+            <span class="material-symbols-outlined">playlist_play</span>
+        </button>
+        <button onclick="startWebcam()">
+            <span class="material-symbols-outlined">videocam</span>
+        </button>
+    </div>
+
+    <!-- Playlist Modal -->
+    <div class="playlist-modal" id="playlistModal">
+        <div class="modal-header">
+            <h2>플레이리스트 (<span id="count">0</span>)</h2>
+            <button class="close-btn" onclick="togglePlaylist()">✕</button>
+        </div>
+        <div id="playlistItems"></div>
+        <div class="add-form">
+            <input type="text" id="urlInput" placeholder="YouTube URL 또는 ID">
+            <input type="text" id="titleInput" placeholder="제목">
+            <button onclick="addVideo()">
+                <span class="material-symbols-outlined">add</span>
+                추가
+            </button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let playlist = [];
+        let player;
+        let webcamStream;
+        let currentIndex = 0;
+
+        // Load playlist
+        async function loadPlaylist() {
+            // Check localStorage first
+            const stored = localStorage.getItem('playlist');
+            let loadedFromStorage = false;
+
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        playlist = parsed;
+                        console.log('Loaded from localStorage');
+                        loadedFromStorage = true;
+                    }
+                } catch (e) {
+                    console.error('Error parsing localStorage', e);
+                }
+            }
+
+            if (!loadedFromStorage) {
+                // Load from txt file (default)
+                try {
+                    const response = await fetch('playlist.txt');
+                    const text = await response.text();
+
+                    playlist = text.trim().split('\n')
+                        .filter(line => line.trim())
+                        .map(line => {
+                            const [id, title] = line.split('|');
+                            return { id: id.trim(), title: title ? title.trim() : id.trim() };
+                        });
+
+                    // Save to localStorage
+                    savePlaylist();
+                    console.log('Loaded from playlist.txt');
+                } catch (error) {
+                    console.error('Error loading playlist:', error);
+                    playlist = [{ id: '372ByJedKsY', title: '기본 비디오' }];
+                }
+            }
+
+            setStatus(`${playlist.length}개 비디오 로드됨`);
+        }
+
+        function savePlaylist() {
+            localStorage.setItem('playlist', JSON.stringify(playlist));
+            updatePlaylistUI();
+            updateNextVideo();
+        }
+
+        function extractVideoId(input) {
+            input = input.trim();
+            if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/
+            ];
+
+            for (let p of patterns) {
+                let match = input.match(p);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        function addVideo() {
+            const url = document.getElementById('urlInput').value;
+            const title = document.getElementById('titleInput').value || '새 비디오';
+
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                alert('올바른 URL 또는 ID 입력');
+                return;
+            }
+
+            playlist.push({ id: videoId, title: title });
+            savePlaylist();
+
+            document.getElementById('urlInput').value = '';
+            document.getElementById('titleInput').value = '';
+            setStatus(`"${title}" 추가됨`);
+        }
+
+        function deleteVideo(index) {
+            if (playlist.length <= 1) {
+                alert('최소 1개 필요');
+                return;
+            }
+
+            if (confirm(`"${playlist[index].title}" 삭제?`)) {
+                playlist.splice(index, 1);
+                if (index <= currentIndex && currentIndex > 0) currentIndex--;
+                savePlaylist();
+                if (index === currentIndex) playVideo(currentIndex);
+            }
+        }
+
+        function updatePlaylistUI() {
+            const container = document.getElementById('playlistItems');
+            const count = document.getElementById('count');
+
+            container.innerHTML = '';
+            count.textContent = playlist.length;
+
+            playlist.forEach((v, i) => {
+                const div = document.createElement('div');
+                div.className = 'playlist-item' + (i === currentIndex ? ' active' : '');
+                div.innerHTML = `
+                    <div class="item-info" onclick="playVideo(${i})">
+                        ${i + 1}. ${v.title}
+                    </div>
+                    <div class="item-actions">
+                        <button class="delete-btn" onclick="deleteVideo(${i})">삭제</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateNextVideo() {
+            if (playlist.length === 0) return;
+            const nextIndex = (currentIndex + 1) % playlist.length;
+            document.getElementById('nextTitle').textContent = playlist[nextIndex].title;
+        }
+
+        function playVideo(index) {
+            if (!player) return;
+            currentIndex = index;
+            player.loadVideoById(playlist[index].id);
+            updatePlaylistUI();
+            updateNextVideo();
+            setStatus(`재생: ${playlist[index].title}`);
+        }
+
+        function playPrevious() {
+            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            playVideo(currentIndex);
+        }
+
+        function playNext() {
+            currentIndex = (currentIndex + 1) % playlist.length;
+            playVideo(currentIndex);
+        }
+
+        function skipToNext() {
+            playNext();
+        }
+
+        function togglePlay() {
+            if (!player) return;
+            if (player.getPlayerState() === 1) player.pauseVideo();
+            else player.playVideo();
+        }
+
+        function seekBackward() {
+            if (!player) return;
+            const current = player.getCurrentTime();
+            player.seekTo(Math.max(0, current - 10));
+        }
+
+        function seekForward() {
+            if (!player) return;
+            const current = player.getCurrentTime();
+            const duration = player.getDuration();
+            player.seekTo(Math.min(duration, current + 10));
+        }
+
+        function togglePlaylist() {
+            document.getElementById('playlistModal').classList.toggle('active');
+        }
+
+        async function startWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 1280, height: 720 },
+                    audio: false
+                });
+
+                const webcam = document.getElementById('webcam');
+                webcam.srcObject = stream;
+                webcam.style.display = 'block';
+                document.getElementById('placeholder').style.display = 'none';
+                webcamStream = stream;
+                setStatus('웹캠 활성화');
+            } catch (error) {
+                alert('웹캠 권한 필요');
+            }
+        }
+
+        function setStatus(text) {
+            // document.getElementById('status').textContent = text;
+            console.log(text);
+        }
+
+        // Speed controls
+        document.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.onclick = function () {
+                if (!player) return;
+                const speed = parseFloat(this.dataset.speed);
+                player.setPlaybackRate(speed);
+                document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                setStatus(`배속: ${speed}x`);
+            };
+        });
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: playlist[0]?.id || '372ByJedKsY',
+                playerVars: { autoplay: 1, controls: 1 },
+                events: {
+                    onReady: (e) => {
+                        setStatus('준비 완료');
+                        e.target.playVideo();
+                        updatePlaylistUI();
+                        updateNextVideo();
+                    },
+                    onStateChange: (e) => {
+                        const icon = document.getElementById('playIcon');
+                        if (e.data === 1) icon.textContent = 'pause';
+                        else if (e.data === 2) icon.textContent = 'play_arrow';
+                        else if (e.data === 0) playNext();
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        loadPlaylist();
+    </script>
+</body>
+
+</html>
