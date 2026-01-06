@@ -10,10 +10,6 @@
             msg.includes('GL version') ||
             msg.includes('OpenGL error checking') ||
             msg.includes('Graph successfully started') ||
-        return msg.includes('gl_context') ||
-            msg.includes('GL version') ||
-            msg.includes('OpenGL error checking') ||
-            msg.includes('Graph successfully started') ||
             msg.includes('Successfully created a WebGL context') ||
             msg.includes('RET_CHECK failure') ||
             msg.includes('texImage2D: no video');
@@ -788,6 +784,20 @@ function updateTimerDisplay() {
     const s = (totalExerciseTime % 60).toString().padStart(2, '0');
 
     timerDiv.textContent = `${h}:${m}:${s}`;
+
+    // Add click to reset timer (only add event listener once)
+    if (!timerDiv.dataset.listenerAdded) {
+        timerDiv.addEventListener('click', () => {
+            if (confirm('운동 시간을 0으로 초기화하시겠습니까?')) {
+                totalExerciseTime = 0;
+                updateTimerDisplay();
+                localStorage.setItem(STORAGE_KEYS.EXERCISE_TIME, 0);
+            }
+        });
+        timerDiv.style.cursor = 'pointer';
+        timerDiv.title = '클릭하여 초기화';
+        timerDiv.dataset.listenerAdded = 'true';
+    }
 }
 
 /* =========================================

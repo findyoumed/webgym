@@ -1,902 +1,3 @@
-<<<<<<< HEAD
-﻿@charset "UTF-8";
-
-/* =========================================
-   Base Styles
-   ========================================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  background: #0a0e27;
-  color: white;
-  overflow: hidden;
-}
-
-/* =========================================
-   Main Layout Container
-   ========================================= */
-.container {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-/* --- Split Mode (Default) --- */
-.container:not(.overlay-mode) {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  background: #222;
-}
-
-.container:not(.overlay-mode) .panel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* --- Overlay Mode --- */
-.container.overlay-mode {
-  display: block;
-}
-
-.container.overlay-mode .panel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.container.overlay-mode .video-panel {
-  z-index: 1;
-}
-
-.container.overlay-mode .webcam-panel {
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* =========================================
-   Panel Specifics
-   ========================================= */
-.panel {
-  background: #000;
-}
-
-.video-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-.webcam-panel {
-  position: relative;
-}
-
-/* Video Player Area */
-.player-wrapper {
-  flex: 1;
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-#player {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* Webcam Elements */
-#webcam {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scaleX(-1);
-  pointer-events: none;
-}
-
-.placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #666;
-  background: #111;
-}
-
-/* =========================================
-   Next Video Bar
-   ========================================= */
-.next-video-bar {
-  height: 50px;
-  background: rgba(20, 26, 58, 0.95);
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
-  z-index: 10;
-}
-
-.next-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  margin-left: 15px;
-  overflow: hidden;
-}
-
-.next-label {
-  color: #00d4ff;
-  font-weight: 600;
-  font-size: 13px;
-  white-space: nowrap;
-}
-
-.next-title {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* =========================================
-   Speed Controls (Overlay & Mobile)
-   ========================================= */
-/* Desktop Overlay */
-.speed-overlay {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  display: flex;
-  gap: 6px;
-  background: rgba(0, 0, 0, 0.85);
-  padding: 8px 12px;
-  border-radius: 25px;
-  z-index: 20;
-}
-
-/* Timer Overlay */
-.timer-overlay {
-  position: fixed;
-  top: 20px;
-  left: 80px;
-  /* Shifted right for refresh button */
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 8px 15px;
-  border-radius: 25px;
-  font-size: 16px;
-  font-weight: 700;
-  z-index: 20;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 1px;
-}
-
-/* Mobile Menu */
-.settings-container {
-  position: relative;
-  margin-left: 10px;
-  display: none;
-}
-
-.speed-menu {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  background: rgba(20, 26, 58, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 15px;
-  width: 200px;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 100;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-}
-
-.speed-menu.active {
-  display: flex;
-}
-
-.speed-menu-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 5px;
-  text-align: center;
-}
-
-.speed-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-/* Common Speed Button Styles */
-.speed-btn {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.speed-overlay .speed-btn {
-  width: 48px;
-  height: 30px;
-  border-radius: 15px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-}
-
-.speed-menu .speed-btn {
-  width: 100%;
-  height: 36px;
-  border-radius: 8px;
-}
-
-.speed-btn:hover {
-  border-color: #00d4ff;
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.1);
-}
-
-.speed-btn.active {
-  background: #00d4ff;
-  border-color: #00d4ff;
-  color: #000;
-}
-
-/* =========================================
-   Bottom Controls Bar
-   ========================================= */
-.controls {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 10px;
-  background: rgba(0, 0, 0, 0.3);
-  /* Changed to 30% opacity */
-  padding: 15px 20px;
-  border-radius: 15px;
-  align-items: center;
-  z-index: 1000;
-  white-space: nowrap;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-}
-
-.ctrl-btn {
-  background: transparent;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 18px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  box-shadow: none;
-}
-
-.ctrl-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #fff;
-  transform: translateY(-2px);
-}
-
-.ctrl-btn:active {
-  transform: scale(0.95);
-}
-
-
-.ctrl-btn.active {
-  background: rgba(0, 212, 255, 0.15);
-  color: #00d4ff;
-  border-color: #00d4ff;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
-}
-
-#webcamBtn.active,
-#flipBtn.active {
-  background: rgba(0, 212, 255, 0.15);
-color: #00d4ff;
-border-color: #00d4ff;
-}
-
-.btn-icon-only {
-  padding: 10px;
-  border-radius: 50%;
-  aspect-ratio: 1/1;
-  justify-content: center;
-}
-
-
-/* =========================================
-   Opacity Slider Styling (Conditional Colors)
-   ========================================= */
-
-/* 1. Default (Split Mode - Disabled/Gray) */
-.opacity-container {
-  display: flex !important;
-  align-items: center;
-  gap: 10px;
-  margin-left: 10px;
-  padding-left: 15px;
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
-  position: relative;
-  pointer-events: none;
-  opacity: 1;
-}
-
-.opacity-container span {
-  color: #555 !important;
-  transition: color 0.3s;
-}
-
-input[type=range] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100px;
-  background: transparent;
-}
-
-input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  background: #444 !important;
-  border-radius: 2px;
-  transition: background 0.3s;
-}
-
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  background: #666 !important;
-  margin-top: -4px;
-  transition: background 0.3s, transform 0.3s;
-}
-
-
-/* 2. Overlay Mode (Active/Blue) */
-.container.overlay-mode~.controls .opacity-container {
-  pointer-events: auto;
-}
-
-.container.overlay-mode~.controls .opacity-container span {
-  color: #00d4ff !important;
-}
-
-.container.overlay-mode~.controls input[type=range]::-webkit-slider-runnable-track {
-  background: #00d4ff !important;
-}
-
-.container.overlay-mode~.controls input[type=range]::-webkit-slider-thumb {
-  background: #fff !important;
-  border: 2px solid #00d4ff;
-  height: 16px;
-  width: 16px;
-  margin-top: -6px;
-  cursor: pointer;
-}
-
-
-/* --- Mobile Adjustments --- */
-@media (max-width: 768px) {
-  .opacity-container {
-    border-left: none;
-    margin-left: 2px;
-    padding-left: 2px;
-    width: 30px;
-    justify-content: center;
-  }
-
-  .opacity-container input[type=range] {
-    display: none;
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 0 15px;
-    border-radius: 20px;
-    z-index: 9999;
-  }
-
-  .container.overlay-mode~.controls .opacity-container.active input[type=range] {
-    display: block;
-    pointer-events: auto;
-  }
-}
-
-/* =========================================
-   Playlist Modal
-   ========================================= */
-.playlist-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(20, 26, 58, 0.98);
-  padding: 30px;
-  border-radius: 15px;
-  width: 650px;
-  max-height: 80vh;
-  overflow-y: auto;
-  display: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  z-index: 2000;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-@media (max-width: 768px) {
-  .playlist-modal {
-    width: 100%;
-    left: 0;
-    top: 10%;
-    transform: none;
-    max-height: 80vh;
-    border-radius: 12px;
-    padding: 16px;
-    overflow-y: auto;
-  }
-
-  #playlistItems {
-    overflow-y: auto;
-  }
-}
-
-.playlist-modal.active {
-  display: block;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.close-btn {
-  background: transparent;
-  color: white;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.playlist-item {
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.3);
-  margin-bottom: 10px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.playlist-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.playlist-item.active {
-  background: rgba(0, 212, 255, 0.2);
-  border-left: 3px solid #00d4ff;
-}
-
-.item-info {
-  flex: 1;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background: rgba(255, 0, 0, 0.3);
-  color: #ff5555;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.add-form {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px;
-  margin: 5px 0;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .playlist-modal {
-    width: calc(100% - 24px);
-    max-height: calc(100vh - 24px);
-    left: 0;
-    right: 0;
-    top: 12px;
-    margin: 0 12px;
-    transform: none;
-    border-radius: 12px;
-    padding: 18px;
-    overflow-y: auto;
-  }
-
-  .modal-header {
-    position: sticky;
-    top: 0;
-    background: rgba(20, 26, 58, 0.98);
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    z-index: 1;
-  }
-
-  #playlistItems {
-    max-height: calc(100vh - 220px);
-    overflow-y: auto;
-  }
-
-  .item-info {
-    font-size: 14px;
-    white-space: normal;
-    word-break: break-word;
-  }
-}
-
-/* =========================================
-   Mobile Responsiveness
-   ========================================= */
-@media (max-width: 768px) {
-
-  .container:not(.overlay-mode) {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  .speed-overlay {
-    display: none;
-  }
-
-  .settings-container {
-    display: block;
-  }
-
-  .controls {
-    width: 100%;
-    justify-content: center;
-    gap: 1px;
-    padding: 6px 2px;
-    overflow: visible;
-  }
-
-  .ctrl-btn {
-    width: 30px;
-    height: 30px;
-    min-width: 0;
-    padding: 0;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-  }
-
-  .ctrl-btn span {
-    font-size: 18px;
-    margin: 0;
-  }
-
-  .btn-text,
-  .controls>div[style*="width:1px"] {
-    display: none !important;
-  }
-
-  .opacity-container input[type=range] {
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;
-    height: 40px;
-
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 20px;
-    padding: 0 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: all 0.2s ease;
-
-    -webkit-appearance: slider-horizontal;
-    appearance: none;
-    writing-mode: horizontal-tb;
-    cursor: pointer;
-  }
-
-  .opacity-container.active input[type=range] {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    bottom: 60px;
-  }
-
-  .opacity-container input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    background: #555;
-    border-radius: 2px;
-  }
-
-  .opacity-container input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #00d4ff;
-    margin-top: -8px;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    .opacity-container {
-      margin-left: 2px;
-      padding-left: 2px;
-      border-left: none;
-      width: 30px;
-      height: 30px;
-      justify-content: center;
-    }
-
-    .opacity-container span {
-      font-size: 18px !important;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .container.overlay-mode {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: #000;
-    }
-
-    .container.overlay-mode .video-panel {
-      position: relative;
-      width: 100%;
-      height: auto;
-      z-index: 1;
-    }
-
-    .container.overlay-mode .player-wrapper {
-      width: 100%;
-      aspect-ratio: 16/9;
-      position: relative;
-    }
-
-    .container.overlay-mode #player {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .container.overlay-mode .webcam-panel {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      aspect-ratio: 16/9;
-      transform: translateY(-50%);
-      z-index: 5;
-      height: auto;
-      pointer-events: none;
-    }
-
-    .container.overlay-mode .next-video-bar {
-      position: absolute;
-      bottom: -50px;
-      width: 100%;
-      z-index: 10;
-    }
-
-    .container.overlay-mode #webcam {
-      object-fit: cover;
-    }
-  }
-}
-
-/* Motion Detection Canvas */
-#output_canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.score-overlay {
-  position: fixed;
-  top: 20px;
-  left: 220px;
-  /* Shifted right */
-  background: rgba(0, 0, 0, 0.6);
-  color: #FDB927;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-family: 'Roboto Mono', monospace;
-  font-size: 1.2rem;
-  font-weight: bold;
-  z-index: 2000;
-  border: 1px solid rgba(253, 185, 39, 0.3);
-  text-shadow: 0 0 5px rgba(253, 185, 39, 0.5);
-}
-
-/* Sensitivity Slider (Same style as Opacity) */
-.sensitivity-container {
-  display: flex !important;
-  align-items: center;
-  gap: 10px;
-  margin-left: 10px;
-  padding-left: 15px;
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
-  position: relative;
-  pointer-events: auto;
-  /* Always active */
-}
-
-.sensitivity-container span {
-  color: #FDB927 !important;
-  transition: color 0.3s;
-}
-
-.sensitivity-container input[type=range] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100px;
-  background: transparent;
-}
-
-.sensitivity-container input[type=range]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  background: #FDB927 !important;
-  border-radius: 2px;
-  transition: background 0.3s;
-}
-
-.sensitivity-container input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 12px;
-  width: 12px;
-  border-radius: 50%;
-  background: #fff !important;
-  border: 2px solid #FDB927;
-  margin-top: -4px;
-  cursor: pointer;
-  transition: transform 0.3s;
-}
-
-
-/* Refresh Button */
-.refresh-overlay {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.refresh-overlay:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: rotate(180deg);
-}
-
-/* Slider Wrapper & Label */
-.slider-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.slider-label {
-  position: absolute;
-  top: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.7);
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-@media (max-width: 768px) {
-  .slider-label {
-    display: none;
-  }
-
-  /* Mobile Sensitivity Slider */
-  .sensitivity-container input[type=range] {
-    display: none;
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-90%); /* Shifted left */
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 0 15px;
-    border-radius: 20px;
-    z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .sensitivity-container.active input[type=range] {
-    display: block;
-    pointer-events: auto;
-  }
-}
-=======
 @charset "UTF-8";
 
 /* =========================================
@@ -928,7 +29,6 @@ body {
 }
 
 /* --- Split Mode (Default) --- */
-/* .container에 별도 클래스가 없으면 Split 모드 */
 .container:not(.overlay-mode) {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -962,8 +62,7 @@ body {
 
 .container.overlay-mode .webcam-panel {
   z-index: 2;
-  pointer-events: none; /* 클릭 투과 */
-  /* opacity는 JS에서 제어 */
+  pointer-events: none;
 }
 
 /* =========================================
@@ -1001,11 +100,11 @@ body {
 
 /* Webcam Elements */
 #webcam {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scaleX(-1); /* 거울 모드 */
-    pointer-events: none; /* 클릭 투과 보장 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  pointer-events: none;
 }
 
 .placeholder {
@@ -1028,7 +127,7 @@ body {
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0; /* 크기 줄어들지 않음 */
+  flex-shrink: 0;
   z-index: 10;
 }
 
@@ -1070,6 +169,24 @@ body {
   padding: 8px 12px;
   border-radius: 25px;
   z-index: 20;
+}
+
+/* Timer Overlay */
+.timer-overlay {
+  position: fixed;
+  top: 20px;
+  left: 80px;
+  /* Shifted right for refresh button */
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 700;
+  z-index: 20;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
 }
 
 /* Mobile Menu */
@@ -1166,16 +283,16 @@ body {
   transform: translateX(-50%);
   display: flex;
   gap: 10px;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.3);
+  /* Changed to 30% opacity */
   padding: 15px 20px;
   border-radius: 15px;
   align-items: center;
-  z-index: 1000; /* 최상단 보장 */
+  z-index: 1000;
   white-space: nowrap;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* === 기본 버튼 스타일 (복구: 투명 배경) === */
 .ctrl-btn {
   background: transparent;
   color: #fff;
@@ -1203,22 +320,19 @@ body {
   transform: scale(0.95);
 }
 
-/* === 토글 버튼 전용 스타일 override 필요 없음 (위와 동일) === */
-/* 이미 위 스타일이 토글 버튼 꺼짐 상태와 동일하므로 별도 override 불필요 */
-/* 단, 켜짐 상태(Active)는 파란색 유지 */
 
 .ctrl-btn.active {
-  background: rgba(0, 212, 255, 0.15); /* 은은한 파랑 */
-  color: #00d4ff;         /* 파란 아이콘 */
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
   border-color: #00d4ff;
   box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
 }
 
-/* 웹캠 등 특정 토글 버튼도 동일한 active 스타일 적용 */
-#webcamBtn.active, #flipBtn.active, button[title="화면 모드"].active {
-    background: rgba(0, 212, 255, 0.15);
-    color: #00d4ff;
-    border-color: #00d4ff;
+#webcamBtn.active,
+#flipBtn.active {
+  background: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+  border-color: #00d4ff;
 }
 
 .btn-icon-only {
@@ -1228,114 +342,478 @@ body {
   justify-content: center;
 }
 
-/* ... (중략) ... */
 
 /* =========================================
    Opacity Slider Styling (Conditional Colors)
    ========================================= */
 
 /* 1. Default (Split Mode - Disabled/Gray) */
-/* 컨테이너: 비활성 상태 */
 .opacity-container {
-    display: flex !important;
-    align-items: center;
-    gap: 10px;
-    margin-left: 10px;
-    padding-left: 15px;
-    border-left: 1px solid rgba(255, 255, 255, 0.3);
-    position: relative;
-    pointer-events: none; /* 클릭 금지 */
-    opacity: 1; /* 투명도 100% (색상으로만 구분) */
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+  padding-left: 15px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  pointer-events: none;
+  opacity: 1;
 }
 
-/* 아이콘: 회색 */
 .opacity-container span {
-    color: #555 !important;
-    transition: color 0.3s;
+  color: #555 !important;
+  transition: color 0.3s;
 }
 
-/* 슬라이더 트랙: 회색 */
 input[type=range] {
-    -webkit-appearance: none;
-    width: 100px; /* PC 기본 너비 */
-    background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  background: transparent;
 }
 
 input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    background: #444 !important; /* 비활성 회색 */
-    border-radius: 2px;
-    transition: background 0.3s;
+  width: 100%;
+  height: 4px;
+  background: #444 !important;
+  border-radius: 2px;
+  transition: background 0.3s;
 }
 
 input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 12px;
-    width: 12px;
-    border-radius: 50%;
-    background: #666 !important; /* 비활성 회색 */
-    margin-top: -4px;
-    transition: background 0.3s, transform 0.3s;
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #666 !important;
+  margin-top: -4px;
+  transition: background 0.3s, transform 0.3s;
 }
 
 
 /* 2. Overlay Mode (Active/Blue) */
-.container.overlay-mode ~ .controls .opacity-container {
-    pointer-events: auto; /* 클릭 가능 */
+.container.overlay-mode~.controls .opacity-container {
+  pointer-events: auto;
 }
 
-/* 아이콘: 파란색 */
-.container.overlay-mode ~ .controls .opacity-container span {
-    color: #00d4ff !important;
+.container.overlay-mode~.controls .opacity-container span {
+  color: #00d4ff !important;
 }
 
-/* 슬라이더 트랙: 파란색 */
-.container.overlay-mode ~ .controls input[type=range]::-webkit-slider-runnable-track {
-    background: #00d4ff !important;
+.container.overlay-mode~.controls input[type=range]::-webkit-slider-runnable-track {
+  background: #00d4ff !important;
 }
 
-/* 슬라이더 핸들: 파란색 & 커짐 */
-.container.overlay-mode ~ .controls input[type=range]::-webkit-slider-thumb {
-    background: #fff !important; /* 핸들은 흰색 */
-    border: 2px solid #00d4ff;   /* 테두리 파란색 */
-    height: 16px;
-    width: 16px;
-    margin-top: -6px;
-    cursor: pointer;
+.container.overlay-mode~.controls input[type=range]::-webkit-slider-thumb {
+  background: #fff !important;
+  border: 2px solid #00d4ff;
+  height: 16px;
+  width: 16px;
+  margin-top: -6px;
+  cursor: pointer;
 }
 
 
 /* --- Mobile Adjustments --- */
 @media (max-width: 768px) {
-    .opacity-container {
-        border-left: none;
-        margin-left: 2px;
-        padding-left: 2px;
-        width: 30px;
-        justify-content: center;
-    }
-    
-    /* 모바일에서는 슬라이더(input)를 평소에 숨기고 팝업으로 띄움 (기존 로직 유지) */
-    .opacity-container input[type=range] {
-        display: none; /* 일단 숨김 */
-        position: absolute;
-        bottom: 50px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 140px;
-        height: 40px;
-        background: rgba(0,0,0,0.9);
-        padding: 0 15px;
-        border-radius: 20px;
-        z-index: 9999;
-    }
 
-    /* 오버레이 모드 + 활성화(클릭) 시에만 등장 */
-    .container.overlay-mode ~ .controls .opacity-container.active input[type=range] {
-        display: block;
-        pointer-events: auto;
-    }
+  /* Change split mode grid layout to vertical (rows) on mobile */
+  .container:not(.overlay-mode) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  /* Hide desktop speed overlay, show mobile settings */
+  .speed-overlay {
+    display: none;
+  }
+
+  .settings-container {
+    display: block;
+  }
+
+  /* Opacity Controls */
+  .opacity-container {
+    border-left: none;
+    margin-left: 2px;
+    padding-left: 2px;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+  }
+
+  .opacity-container span {
+    font-size: 18px !important;
+  }
+
+  /* Mobile Opacity Slider - Popup Style with Label */
+  .opacity-container .slider-wrapper {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 20px;
+    padding: 0 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    display: none;
+  }
+
+  /* Show slider when active */
+  .opacity-container.active .slider-wrapper {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    bottom: 60px;
+    display: block;
+  }
+
+  .opacity-container input[type=range] {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Slider track styling */
+  .opacity-container input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+  }
+
+  /* Slider thumb styling */
+  .opacity-container input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00d4ff;
+    margin-top: -8px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Mobile Layout - Overlay Mode */
+  .container.overlay-mode {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #000;
+  }
+
+  /* 1. Video Panel: Center Positioning */
+  .container.overlay-mode .video-panel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+  }
+
+  /* 2. Player Area: 16:9 Ratio Fixed */
+  .container.overlay-mode .player-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+  }
+
+  .container.overlay-mode #player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 3. Webcam Panel: Overlap Exactly on Player */
+  .container.overlay-mode .webcam-panel {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 16/9;
+    transform: translateY(-50%);
+    z-index: 5;
+    height: auto;
+    pointer-events: none;
+  }
+
+  /* Next Video Bar Positioning */
+  .container.overlay-mode .next-video-bar {
+    position: absolute;
+    bottom: -50px;
+    width: 100%;
+    z-index: 10;
+  }
+
+  /* Webcam Video Aspect Ratio */
+  .container.overlay-mode #webcam {
+    object-fit: cover;
+  }
+
+  /* Hide desktop speed overlay on mobile */
+  .speed-overlay {
+    display: none;
+  }
+
+  /* Show settings menu on mobile */
+  .settings-container {
+    display: block;
+  }
+
+  /* Mobile Control Bar */
+  .controls {
+    width: 98%;
+    justify-content: center;
+    padding: 8px 4px;
+    bottom: 5px;
+    gap: 4px;
+  }
+
+  .ctrl-btn {
+    padding: 6px;
+    font-size: 0;
+    min-width: 32px;
+    justify-content: center;
+  }
+
+  .ctrl-btn .material-symbols-outlined {
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .btn-text {
+    display: none;
+  }
+}
+
+/* Motion Detection Canvas */
+#output_canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 10;
+  transform: scaleX(-1);
+}
+
+.score-overlay {
+  position: fixed;
+  top: 20px;
+  left: 220px;
+  /* Shifted right */
+  background: rgba(0, 0, 0, 0.6);
+  color: #FDB927;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  z-index: 2000;
+  border: 1px solid rgba(253, 185, 39, 0.3);
+  text-shadow: 0 0 5px rgba(253, 185, 39, 0.5);
+}
+
+/* Sensitivity Slider (Same style as Opacity) */
+.sensitivity-container {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+  padding-left: 15px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  pointer-events: auto;
+  /* Always active */
+}
+
+.sensitivity-container span {
+  color: #00d4ff !important;
+  transition: color 0.3s;
+}
+
+.sensitivity-container input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  background: transparent;
+}
+
+.sensitivity-container input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: #00d4ff !important;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.sensitivity-container input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: #fff !important;
+  border: 2px solid #00d4ff;
+  margin-top: -4px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+
+/* Refresh Button */
+.refresh-overlay {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.refresh-overlay:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(180deg);
+}
+
+/* Slider Wrapper & Label */
+.slider-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.slider-label {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Make opacity and sensitivity labels blue on PC too */
+.opacity-container .slider-label,
+.sensitivity-container .slider-label {
+  color: #00d4ff;
+  font-size: 10px;
+}
+
+@media (max-width: 768px) {
+
+  /* Show Label on Mobile */
+  .slider-label {
+    display: block;
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+  }
+
+  .opacity-container .slider-label {
+    color: #00d4ff;
+    font-size: 12px !important;
+  }
+
+  .sensitivity-container .slider-label {
+    color: #00d4ff;
+    font-size: 12px !important;
+  }
+
+  /* Changed to Blue */
+
+  /* Mobile Sensitivity Slider */
+  .sensitivity-container .slider-wrapper {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-90%);
+    /* Shifted left */
+    width: 140px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 0 15px;
+    border-radius: 20px;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .sensitivity-container.active .slider-wrapper {
+    display: block;
+  }
+
+  .sensitivity-container input[type=range] {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Override Sensitivity Color to Blue on Mobile */
+  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
+    background: #00d4ff !important;
+  }
+
+  .sensitivity-container input[type=range]::-webkit-slider-thumb {
+    border-color: #00d4ff !important;
+  }
+}
+
+/* =========================================
+   Top Left Controls Group
+   ========================================= */
+.top-left-controls {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2000;
+}
+
+/* Reset positioning for children */
+.top-left-controls .refresh-overlay,
+.top-left-controls .timer-overlay,
+.top-left-controls .score-overlay {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
 }
 
 /* =========================================
@@ -1350,29 +828,13 @@ input[type=range]::-webkit-slider-thumb {
   padding: 30px;
   border-radius: 15px;
   width: 650px;
+  max-width: 90%;
   max-height: 80vh;
   overflow-y: auto;
   display: none;
   border: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 2000;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-@media (max-width: 768px) {
-  .playlist-modal {
-    width: 100%;
-    left: 0;
-    top: 10%;
-    transform: none;
-    max-height: 80vh;
-    border-radius: 12px;
-    padding: 16px;
-    overflow-y: auto;
-  }
-
-  #playlistItems {
-    overflow-y: auto;
-  }
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 .playlist-modal.active {
@@ -1386,13 +848,25 @@ input[type=range]::-webkit-slider-thumb {
   margin-bottom: 20px;
 }
 
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
 .close-btn {
   background: transparent;
   color: white;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
   padding: 5px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .playlist-item {
@@ -1404,6 +878,7 @@ input[type=range]::-webkit-slider-thumb {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  transition: all 0.2s ease;
 }
 
 .playlist-item:hover {
@@ -1418,15 +893,41 @@ input[type=range]::-webkit-slider-thumb {
 .item-info {
   flex: 1;
   cursor: pointer;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+}
+
+.item-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.delete-btn,
+.move-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
 }
 
 .delete-btn {
-  background: rgba(255, 0, 0, 0.3);
+  background: rgba(255, 0, 0, 0.2);
   color: #ff5555;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
+  border-color: rgba(255, 85, 85, 0.3);
+}
+
+.delete-btn:hover {
+  background: rgba(255, 0, 0, 0.3);
+  border-color: #ff5555;
+}
+
+.move-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .add-form {
@@ -1443,222 +944,44 @@ input[type=range]::-webkit-slider-thumb {
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
   color: white;
+  font-family: inherit;
+  font-size: 14px;
 }
 
-/* 모바일에서 덮어쓴 데스크톱 모달 스타일을 재정의하여 화면 안에 꽉 차게 표시 */
+.input-field::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #00d4ff;
+  background: rgba(0, 0, 0, 0.5);
+}
+
 @media (max-width: 768px) {
   .playlist-modal {
-    width: calc(100% - 24px);
-    max-height: calc(100vh - 24px);
-    left: 0;
-    right: 0;
-    top: 12px;
-    margin: 0 12px;
-    transform: none;
-    border-radius: 12px;
-    padding: 18px;
-    overflow-y: auto;
+    width: 90%;
+    max-height: 70vh;
+    padding: 20px;
   }
 
-  /* 헤더와 리스트가 겹치지 않고, 긴 제목이 잘리지 않도록 처리 */
-  .modal-header {
-    position: sticky;
-    top: 0;
-    background: rgba(20, 26, 58, 0.98);
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    z-index: 1;
+  .modal-header h2 {
+    font-size: 18px;
   }
 
-  #playlistItems {
-    max-height: calc(100vh - 220px);
-    overflow-y: auto;
+  .playlist-item {
+    padding: 12px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .item-info {
-    font-size: 14px;
-    white-space: normal;
-    word-break: break-word;
-  }
-}
-
-/* =========================================
-   Mobile Responsiveness
-   ========================================= */
-@media (max-width: 768px) {
-  /* 모바일에서는 기본 Grid layout을 상하(row)로 변경하되,
-       Overlay 모드일 때는 유지 */
-  .container:not(.overlay-mode) {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  .speed-overlay {
-    display: none;
-  }
-
-  .settings-container {
-    display: block;
-  }
-
-  /* --- 모바일 버튼 초소형화 (한 줄에 다 넣기) --- */
-  .controls {
     width: 100%;
-    justify-content: center; /* 중앙 정렬 */
-    gap: 1px; /* 간격 거의 없음 */
-    padding: 6px 2px;
-    overflow: visible; /* 팝업 슬라이더가 잘리지 않게 */
+    margin-bottom: 8px;
   }
 
-  .ctrl-btn {
-    width: 30px;
-    height: 30px;
-    min-width: 0;
-    padding: 0;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    /* 색상은 글로벌 스타일 상속 (일반: 파랑, 토글: 투명/파랑) */
-    /* 단, 모바일에서는 일반 버튼도 너무 튀면 안 되니... 일단 상속받게 둠 */
-  }
-
-  .ctrl-btn span {
-    font-size: 18px;
-    margin: 0;
-  }
-
-  /* 텍스트 및 불필요한 요소 숨김 */
-  .btn-text, 
-  .controls > div[style*="width:1px"] {
-    display: none !important;
-  }
-
-/* --- 모바일/PC 공통: 말풍선 팝업 슬라이더 (가로형) --- */
-.opacity-container input[type=range] {
-    position: absolute;
-    bottom: 50px;       /* 아이콘 위로 띄움 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;       /* 넓은 조작 범위 */
-    height: 40px;       /* 터치하기 편한 높이 */
-    
-    background: rgba(0, 0, 0, 0.9); /* 말풍선 배경 */
-    border-radius: 20px;
-    padding: 0 15px;    /* 내부 여백 */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    z-index: 9999;
-    
-    /* 숨김 처리 */
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    
-    /* 가로 슬라이더 표준 복귀 (터치 오류 해결) */
-    -webkit-appearance: slider-horizontal;
-    appearance: none;
-    writing-mode: horizontal-tb;
-    cursor: pointer;
-}
-
-/* 활성화 시 등장 */
-.opacity-container.active input[type=range] {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    bottom: 60px; /* 살짝 위로 */
-}
-
-/* 슬라이더 스타일링 (가로형) */
-.opacity-container input[type=range]::-webkit-slider-runnable-track {
+  .item-actions {
     width: 100%;
-    height: 4px;
-    background: #555;
-    border-radius: 2px;
-}
-.opacity-container input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #00d4ff;
-    margin-top: -8px;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-/* --- 모바일 전용 스타일 (아이콘 크기 등) --- */
-@media (max-width: 768px) {
-    .opacity-container {
-        margin-left: 2px;
-        padding-left: 2px;
-        border-left: none;
-        width: 30px;
-        height: 30px;
-        justify-content: center;
-    }
-    
-    .opacity-container span {
-      font-size: 18px !important; /* 아이콘 크기 통일 */
-    }
-}
-
-  /* --- 모바일 오버레이 모드 레이아웃 개선 --- */
-  @media (max-width: 768px) {
-      .container.overlay-mode {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          background: #000;
-      }
-
-      /* 1. 비디오 패널: 화면 중앙 배치 */
-      .container.overlay-mode .video-panel {
-          position: relative;
-          width: 100%;
-          height: auto; /* 높이 자동 (늘어남 방지) */
-          z-index: 1;
-      }
-
-      /* 2. 플레이어 영역: 16:9 비율 고정 */
-      .container.overlay-mode .player-wrapper {
-          width: 100%;
-          aspect-ratio: 16/9;
-          position: relative;
-      }
-
-      .container.overlay-mode #player {
-          position: absolute;
-          top: 0; left: 0; width: 100%; height: 100%;
-      }
-
-      /* 3. 웹캠 패널: 플레이어 위에 정확히 겹치기 */
-      .container.overlay-mode .webcam-panel {
-          position: absolute; /* video-panel 위에 겹침 */
-          top: 50%; /* 화면 중앙 기준 */
-          left: 0;
-          width: 100%;
-          aspect-ratio: 16/9; /* 비디오와 동일 비율 */
-          transform: translateY(-50%); /* 수직 중앙 정렬 보정 */
-          z-index: 5; /* 비디오보다 위 */
-          height: auto;
-          pointer-events: none; /* 클릭 투과 */
-      }
-      
-      /* 정보바 위치 보정 (웹캠에 가리지 않게) */
-      .container.overlay-mode .next-video-bar {
-          position: absolute;
-          bottom: -50px; /* 비디오 바로 아래 */
-          width: 100%;
-          z-index: 10;
-      }
-
-      /* 웹캠 영상 자체도 비율 유지 */
-      .container.overlay-mode #webcam {
-          object-fit: cover; 
-          /* contain으로 하면 여백 생길 수 있으니 cover 유지하되 부모가 16:9라 괜찮음 */
-      }
+    justify-content: flex-end;
   }
->>>>>>> ae9a655d37b10c21141ee97ca29cb12d00d1f83d
+}
