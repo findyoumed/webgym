@@ -15,26 +15,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
     <!-- CSS (Separated) -->
-    <link rel="stylesheet" href="style.css?v=final_fix_v7">
+    <link rel="stylesheet" href="style.css?v=final_fix_v8">
 </head>
 
 <body>
     <div class="container overlay-mode">
-        <!-- Refresh Button (Fixed) -->
-        <button class="refresh-overlay" onclick="location.reload()" title="새로고침">
-            <span class="material-symbols-outlined">refresh</span>
-        </button>
-        <!-- Exercise Timer (Fixed) -->
-        <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
-        <div id="scoreDisplay" class="score-overlay" style="display: none;">SCORE: 0</div>
+        <!-- Top Left Controls Group -->
+        <div class="top-left-controls">
+            <button class="refresh-overlay" onclick="location.reload()" title="새로고침">
+                <span class="material-symbols-outlined">refresh</span>
+            </button>
+            <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
+            <div id="scoreDisplay" class="score-overlay" style="display: none;">SCORE: 0</div>
+        </div>
 
         <!-- Default: Overlay Mode -->
         <!-- Video Panel -->
         <div class="panel video-panel">
             <div class="player-wrapper">
                 <div id="player"></div>
-
-                <!-- Exercise Timer -->
 
 
                 <!-- Desktop Speed Controls -->
@@ -129,7 +128,6 @@
                 oninput="updateOpacityFromSlider(this.value)" title="웹캠 투명도">
         </div>
 
-
         <div class="sensitivity-container">
             <span class="material-symbols-outlined" style="font-size: 18px">speed</span>
             <div class="slider-wrapper">
@@ -144,7 +142,9 @@
     <div class="playlist-modal" id="playlistModal">
         <div class="modal-header">
             <h2>플레이리스트 (<span id="count">0</span>)</h2>
-            <button class="close-btn" onclick="togglePlaylist()">✕</button>
+            <button class="close-btn" onclick="togglePlaylist()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
         <div id="playlistItems"></div>
         <div class="add-form">
