@@ -33,8 +33,8 @@ import { MotionAnalyzer } from './js/motion-analyzer.js';
 import { Renderer } from './js/renderer.js';
 
 /* Global State */
-let playlist = [{ id: '372ByJedKsY', title: '????????????????黎??筌??裕ㅒ???..)' }];
-let player;
+let playlist = [{ id: '372ByJedKsY', title: '민첩성 향상운동' }];
+let ytPlayer;
 let webcamStream;
 let currentIndex = 0;
 let isFlipped = true; // Default: Mirrored
@@ -138,10 +138,10 @@ function loadSettings() {
 
 function savePlaybackState() {
 
-    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
+    if (ytPlayer && typeof ytPlayer.getPlayerState === 'function' && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
 
         localStorage.setItem(STORAGE_KEYS.LAST_INDEX, currentIndex);
-        localStorage.setItem(STORAGE_KEYS.LAST_TIME, player.getCurrentTime());
+        localStorage.setItem(STORAGE_KEYS.LAST_TIME, ytPlayer.getCurrentTime());
     }
 }
 
@@ -152,7 +152,7 @@ function saveSetting(key, value) {
 /* =========================================
    Player Initialization (Resume Logic)
    ========================================= */
-function onYouTubeIframeAPIReady() {
+window.onYouTubeIframeAPIReady = function () {
     isYoutubeApiReady = true;
     tryCreatePlayer();
 }
@@ -169,7 +169,7 @@ function onPlaylistLoaded() {
 }
 
 function tryCreatePlayer() {
-    if (!isYoutubeApiReady || player) return;
+    if (!isYoutubeApiReady || ytPlayer) return;
 
     let firstVideoId = '372ByJedKsY'; // Default Video
 
@@ -204,7 +204,7 @@ function tryCreatePlayer() {
     }
 
     // Create YT.Player
-    player = new YT.Player('player', playerConfig);
+    ytPlayer = new YT.Player('player', playerConfig);
 }
 
 function onPlayerReady(e) {
@@ -244,11 +244,11 @@ function onPlayerReady(e) {
     // Watcher: Ensure video keeps playing
     if (!window.playerWatcher) {
         window.playerWatcher = setInterval(() => {
-            if (player && typeof player.getPlayerState === 'function') {
-                const state = player.getPlayerState();
+            if (ytPlayer && typeof ytPlayer.getPlayerState === 'function') {
+                const state = ytPlayer.getPlayerState();
                 // -1: Unstarted, 5: Video cued
                 if (state === -1 || state === 5) {
-                    player.playVideo();
+                    ytPlayer.playVideo();
                 }
             }
         }, 3000);
@@ -257,7 +257,7 @@ function onPlayerReady(e) {
 
 // Global Safety Watcher for Network/API delays
 setInterval(() => {
-    if ((window.YT && window.YT.Player) && !player) {
+    if ((window.YT && window.YT.Player) && !ytPlayer) {
 
         // console.log('Safety Watcher: Creating Missing Player...');
         tryCreatePlayer();
@@ -420,7 +420,7 @@ function onPlayerError(e) {
 
 function playVideo(index) {
 
-    if (!player || !playlist[index]) return;
+    if (!ytPlayer || !playlist[index]) return;
 
     // Save state before switching (optional, maybe not needed since we want to reset time)
     // But importantly, update currentIndex
@@ -431,7 +431,7 @@ function playVideo(index) {
     localStorage.setItem(STORAGE_KEYS.LAST_TIME, 0);
 
     const vidId = playlist[index].id || '372ByJedKsY';
-    player.loadVideoById(vidId);
+    ytPlayer.loadVideoById(vidId);
 
 
     updatePlaylistUI();
@@ -451,26 +451,26 @@ function playPrevious() {
 
 function togglePlay() {
 
-    if (!player) return;
-    const state = player.getPlayerState();
-    if (state === YT.PlayerState.PLAYING) player.pauseVideo();
+    if (!ytPlayer) return;
+    const state = ytPlayer.getPlayerState();
+    if (state === YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
 
-    else player.playVideo();
+    else ytPlayer.playVideo();
 }
 
 function seek(seconds) {
 
-    if (!player) return;
+    if (!ytPlayer) return;
 
-    const current = player.getCurrentTime();
-    player.seekTo(current + seconds);
+    const current = ytPlayer.getCurrentTime();
+    ytPlayer.seekTo(current + seconds);
 }
 
 function setSpeed(speed) {
 
-    if (!player) return;
+    if (!ytPlayer) return;
 
-    player.setPlaybackRate(speed);
+    ytPlayer.setPlaybackRate(speed);
     document.querySelectorAll('.speed-btn').forEach(btn => {
         btn.classList.toggle('active', parseFloat(btn.dataset.speed) === speed);
     });
@@ -639,7 +639,7 @@ function deleteVideo(index) {
                 currentIndex = index % playlist.length;
                 playVideo(currentIndex);
             } else {
-                player.stopVideo();
+                ytPlayer.stopVideo();
                 currentIndex = 0;
 
             }
@@ -753,7 +753,7 @@ function initExerciseTimer() {
 
     // Start counting when video is playing
     timerInterval = setInterval(() => {
-        if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
+        if (ytPlayer && typeof ytPlayer.getPlayerState === 'function' && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
             totalExerciseTime++;
             updateTimerDisplay();
             if (totalExerciseTime % 10 === 0) { // Save every 10s
@@ -861,7 +861,7 @@ function startPoseDetection() {
                 // Analyze Motion (Only when video is playing)
                 if (motionAnalyzer) {
                     // Check if player is playing (State 1)
-                    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                    if (ytPlayer && typeof ytPlayer.getPlayerState === 'function' && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                         const score = motionAnalyzer.update(landmarks);
                         if (scoreDisplay) scoreDisplay.textContent = `SCORE: ${score}`;
                     }
