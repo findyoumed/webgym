@@ -737,26 +737,71 @@ input[type=range]::-webkit-slider-thumb {
     display: block;
   }
 
-  /* Opacity Controls */
-  .opacity-container {
-    border-left: none;
+  /* Mobile Speed Menu Fixed Position */
+  .speed-menu {
+    position: fixed;
+    bottom: 80px;
+    /* 컨트롤 바 위쪽 */
+    right: 20px;
+    width: auto;
+    min-width: 120px;
+    z-index: 9999;
+    background: rgba(20, 26, 58, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Opacity & Sensitivity Controls Common Style */
+  .opacity-container,
+  .sensitivity-container {
+    border: none !important;
+    /* 모든 테두리 강제 제거 */
+    outline: none !important;
+    /* 포커스 아웃라인 제거 */
+    -webkit-tap-highlight-color: transparent;
+    /* 모바일 터치 하이라이트 제거 */
     margin-left: 2px;
     padding-left: 2px;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    /* 32px -> 28px */
+    height: 28px;
+    /* 32px -> 28px */
+    display: flex !important;
     justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2000;
+    /* Ensure it's on top */
+
+    /* Touch Feedback */
+    cursor: pointer;
+    border-radius: 50%;
+    transition: transform 0.1s, background-color 0.2s;
+    pointer-events: auto !important;
+    /* 클릭 활성화 */
   }
 
-  .opacity-container span {
-    font-size: 18px !important;
+  .opacity-container:active,
+  .sensitivity-container:active {
+    transform: scale(0.9);
+    background-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* Mobile Opacity Slider - Popup Style with Label */
-  .opacity-container .slider-wrapper {
+  .opacity-container span,
+  .sensitivity-container span {
+    font-size: 16px !important;
+    /* 18px -> 16px */
+    color: #00d4ff !important;
+    /* 아이콘 색상 강제 */
+  }
+
+  /* Sliders (Hidden by default, Popup on active) */
+  .opacity-container .slider-wrapper,
+  .sensitivity-container .slider-wrapper {
     position: absolute;
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
+    /* 중앙 정렬 */
     width: 140px;
     height: 40px;
     background: rgba(0, 0, 0, 0.9);
@@ -764,23 +809,32 @@ input[type=range]::-webkit-slider-thumb {
     padding: 0 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     z-index: 9999;
+
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition: all 0.2s ease;
-    display: none;
+    display: block;
+    /* display는 block으로 두고 opacity로 제어 */
   }
 
-  /* Show slider when active */
-  .opacity-container.active .slider-wrapper {
+  /* Sensitivity Slider Position Adjustment (Shift Left) */
+  .sensitivity-container .slider-wrapper {
+    transform: translateX(-90%);
+  }
+
+  /* Active State */
+  .opacity-container.active .slider-wrapper,
+  .sensitivity-container.active .slider-wrapper {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     bottom: 60px;
-    display: block;
   }
 
-  .opacity-container input[type=range] {
+  /* Input Range Styling */
+  .opacity-container input[type=range],
+  .sensitivity-container input[type=range] {
     display: block;
     width: 100%;
     height: 100%;
@@ -792,7 +846,8 @@ input[type=range]::-webkit-slider-thumb {
   }
 
   /* Slider track styling */
-  .opacity-container input[type=range]::-webkit-slider-runnable-track {
+  .opacity-container input[type=range]::-webkit-slider-runnable-track,
+  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
     width: 100%;
     height: 4px;
     background: #555;
@@ -800,7 +855,8 @@ input[type=range]::-webkit-slider-thumb {
   }
 
   /* Slider thumb styling */
-  .opacity-container input[type=range]::-webkit-slider-thumb {
+  .opacity-container input[type=range]::-webkit-slider-thumb,
+  .sensitivity-container input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 20px;
     width: 20px;
@@ -809,6 +865,15 @@ input[type=range]::-webkit-slider-thumb {
     margin-top: -8px;
     border: 2px solid #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Override Sensitivity Color to Blue on Mobile */
+  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
+    background: #00d4ff !important;
+  }
+
+  .sensitivity-container input[type=range]::-webkit-slider-thumb {
+    border-color: #00d4ff !important;
   }
 
   /* Mobile Layout - Overlay Mode */
@@ -871,24 +936,30 @@ input[type=range]::-webkit-slider-thumb {
   /* Mobile Control Bar - Compact Mode */
   .controls {
     width: 100%;
-    justify-content: space-between;
+    justify-content: center;
+    /* 중앙 정렬 */
     padding: 5px 2px;
     bottom: 0;
-    gap: 2px;
-    overflow-x: hidden;
+    gap: 1px;
+    /* 간격 최소화 */
+    /* overflow-x: auto;  <-- REMOVED: This causes popup sliders to be clipped */
     background: rgba(0, 0, 0, 0.8);
   }
 
   .ctrl-btn {
     padding: 0;
-    width: 32px;
-    height: 32px;
-    min-width: 30px;
+    width: 28px;
+    /* 32px -> 28px */
+    height: 28px;
+    /* 32px -> 28px */
+    min-width: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
+    border: none;
+    /* 테두리 제거 */
   }
 
   /* Active state background */
@@ -898,7 +969,8 @@ input[type=range]::-webkit-slider-thumb {
   }
 
   .ctrl-btn .material-symbols-outlined {
-    font-size: 18px;
+    font-size: 16px;
+    /* 18px -> 16px */
     margin: 0;
   }
 
@@ -932,46 +1004,5 @@ input[type=range]::-webkit-slider-thumb {
   .sensitivity-container .slider-label {
     color: #00d4ff;
     font-size: 12px !important;
-  }
-
-  /* Mobile Sensitivity Slider */
-  .sensitivity-container .slider-wrapper {
-    display: none;
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-90%);
-    /* Shifted left */
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 0 15px;
-    border-radius: 20px;
-    z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .sensitivity-container.active .slider-wrapper {
-    display: block;
-  }
-
-  .sensitivity-container input[type=range] {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    position: static;
-    transform: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Override Sensitivity Color to Blue on Mobile */
-  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
-    background: #00d4ff !important;
-  }
-
-  .sensitivity-container input[type=range]::-webkit-slider-thumb {
-    border-color: #00d4ff !important;
   }
 }

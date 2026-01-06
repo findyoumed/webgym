@@ -21,7 +21,13 @@
 <body>
     <div class="container overlay-mode">
         <!-- Exercise Timer (Fixed) -->
-        <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
+        <div class="top-left-controls">
+            <div class="refresh-overlay" onclick="resetTimer()" title="타이머 리셋">
+                <span class="material-symbols-outlined">refresh</span>
+            </div>
+            <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
+            <div id="score" class="score-overlay">SCORE: 0</div>
+        </div>
 
         <!-- Default: Overlay Mode -->
         <!-- Video Panel -->
@@ -34,7 +40,7 @@
 
                 <!-- Desktop Speed Controls -->
                 <div class="speed-overlay">
-                    <button class="speed-btn" data-speed="0.5">0.5x</button>
+
                     <button class="speed-btn" data-speed="0.75">0.75x</button>
                     <button class="speed-btn active" data-speed="1">1x</button>
                     <button class="speed-btn" data-speed="1.25">1.25x</button>
@@ -61,7 +67,7 @@
                     <div class="speed-menu" id="speedMenu">
                         <div class="speed-menu-title">재생 속도</div>
                         <div class="speed-options">
-                            <button class="speed-btn" data-speed="0.5">0.5x</button>
+
                             <button class="speed-btn" data-speed="0.75">0.75x</button>
                             <button class="speed-btn active" data-speed="1">1x</button>
                             <button class="speed-btn" data-speed="1.25">1.25x</button>

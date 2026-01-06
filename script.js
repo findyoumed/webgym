@@ -181,8 +181,7 @@ function tryCreatePlayer() {
         }
     }
 
-    // Create YT.Player
-    player = new YT.Player('player', {
+    const playerConfig = {
         height: '100%',
         width: '100%',
         videoId: firstVideoId,
@@ -190,15 +189,22 @@ function tryCreatePlayer() {
             autoplay: 1,
             controls: 1,
             playsinline: 1,
-            rel: 0,
-            origin: window.location.origin // Fix for Vercel
+            rel: 0
         },
         events: {
             onReady: onPlayerReady,
             onStateChange: onPlayerStateChange,
             onError: onPlayerError
         }
-    });
+    };
+
+    // Add origin for Vercel/Production, skip for localhost if causing issues
+    // if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    //     playerConfig.playerVars.origin = window.location.origin;
+    // }
+
+    // Create YT.Player
+    player = new YT.Player('player', playerConfig);
 }
 
 function onPlayerReady(e) {
