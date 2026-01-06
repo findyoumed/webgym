@@ -199,9 +199,9 @@ function tryCreatePlayer() {
     };
 
     // Add origin for Vercel/Production, skip for localhost if causing issues
-    // if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    //     playerConfig.playerVars.origin = window.location.origin;
-    // }
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        playerConfig.playerVars.origin = window.location.origin;
+    }
 
     // Create YT.Player
     player = new YT.Player('player', playerConfig);
