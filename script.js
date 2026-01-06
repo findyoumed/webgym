@@ -10,10 +10,6 @@
             msg.includes('GL version') ||
             msg.includes('OpenGL error checking') ||
             msg.includes('Graph successfully started') ||
-        return msg.includes('gl_context') ||
-            msg.includes('GL version') ||
-            msg.includes('OpenGL error checking') ||
-            msg.includes('Graph successfully started') ||
             msg.includes('Successfully created a WebGL context') ||
             msg.includes('RET_CHECK failure') ||
             msg.includes('texImage2D: no video');
