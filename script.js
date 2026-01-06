@@ -26,9 +26,6 @@
     console.warn = function (...args) {
         if (!shouldSuppress(args)) originalWarn.apply(console, args);
     };
-    console.warn = function (...args) {
-        if (!shouldSuppress(args)) originalWarn.apply(console, args);
-    };
 })();
 
 import { PoseDetector } from './js/pose-detector.js';
@@ -36,7 +33,7 @@ import { MotionAnalyzer } from './js/motion-analyzer.js';
 import { Renderer } from './js/renderer.js';
 
 /* Global State */
-let playlist = [{ id: '372ByJedKsY', title: '기본 비디오(로딩 중...)' }];
+let playlist = [{ id: '372ByJedKsY', title: '????????????????黎??筌??裕ㅒ???..)' }];
 let player;
 let webcamStream;
 let currentIndex = 0;
@@ -125,8 +122,8 @@ function loadSettings() {
     if (sensitivitySlider) {
         sensitivitySlider.value = savedSensitivity;
         // Update motionAnalyzer if already initialized
-        if (window.motionAnalyzer) {
-            window.motionAnalyzer.sensitivity = parseInt(savedSensitivity, 10) * 10;
+        if (motionAnalyzer) {
+            motionAnalyzer.sensitivity = parseInt(savedSensitivity, 10) * 10;
         }
     }
 
@@ -141,7 +138,7 @@ function loadSettings() {
 
 function savePlaybackState() {
 
-    if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
 
         localStorage.setItem(STORAGE_KEYS.LAST_INDEX, currentIndex);
         localStorage.setItem(STORAGE_KEYS.LAST_TIME, player.getCurrentTime());
@@ -178,9 +175,9 @@ function onPlaylistLoaded() {
 function tryCreatePlayer() {
     if (!isYoutubeApiReady || player) return;
 
-    let firstVideoId = '372ByJedKsY'; // 기본값
+    let firstVideoId = '372ByJedKsY'; // ????????癲?
 
-    // 플레이리스트 확인 및 ID 추출
+    // ??????????????깅렰 ??꿔꺂??틝???????ID ????살퓢癲??
     if (playlist && playlist.length > 0) {
         if (currentIndex < 0 || currentIndex >= playlist.length) currentIndex = 0;
         if (playlist[currentIndex] && playlist[currentIndex].id) {
@@ -192,7 +189,7 @@ function tryCreatePlayer() {
     // console.log(`Starting Player: ${firstVideoId}`);
 
 
-    // YT.Player 생성 (에러 처리 없이 직접 호출하여 브라우저 콘솔에 에러 뜨게 함)
+    // YT.Player ???袁⑸즴???(??????轅붽틓??影?뽧걤???????쇨덧???轅붽틓???????꿔꺂??????癲ル슢???援?????Β?レ른???? ????썹땟???????????鶯ㅺ동???????
     player = new YT.Player('player', {
         height: '100%',
         width: '100%',
@@ -202,7 +199,7 @@ function tryCreatePlayer() {
             autoplay: 1,
 
             controls: 1,
-            playsinline: 1, // 모바일 전체화면 방지 및 자동재생
+            playsinline: 1, // ?轅붽틓??熬곥끇釉?????????밸븶?????거?쭛????ш끽維??λ궔? ?????癲????
             rel: 0
         },
         events: {
@@ -218,7 +215,7 @@ function onPlayerReady(e) {
     // console.log('Player Ready!');
 
 
-    // 이어보기 (5초 이상일 때만)
+    // ?????욱룑????ㅼ뒧?????(5???????鶯???????
     const savedTime = localStorage.getItem(STORAGE_KEYS.LAST_TIME);
     if (savedTime) {
         const t = parseFloat(savedTime);
@@ -233,7 +230,7 @@ function onPlayerReady(e) {
     e.target.playVideo();
 
 
-    // 자동재생 실패 시 1초 뒤 재시도
+    // ???癲?????????怨뚯댅 ??1?????????
     setTimeout(() => {
         if (e.target.getPlayerState() !== 1) { // 1 = Playing
             // console.log('Force Play Retry');
@@ -348,7 +345,7 @@ async function toggleWebcam() {
         webcam.srcObject = null;
         webcam.style.display = 'none';
         placeholder.style.display = 'flex';
-        placeholder.textContent = '웹캠이 꺼졌습니다';
+        placeholder.textContent = "Webcam is off.";
 
         if (btn) btn.classList.remove('active');
 
@@ -373,7 +370,7 @@ async function toggleWebcam() {
 
         } catch (error) {
             console.error('Webcam Error:', error);
-            placeholder.textContent = '웹캠 권한 필요';
+            placeholder.textContent = "Webcam permission required.";
         }
     }
 }
@@ -563,14 +560,11 @@ function updatePlaylistUI() {
                 ${i + 1}. ${v.title}
             </div>
             <div class="item-actions">
-
-                <button class="playlist-btn" onclick="moveUp(${i})" title="위로" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>▲</button>
-                <button class="playlist-btn" onclick="moveDown(${i})" title="아래로" ${i === playlist.length - 1 ? 'disabled style="opacity:0.3"' : ''}>▼</button>
-
-                <button class="playlist-btn delete-btn" onclick="deleteVideo(${i})" title="삭제">✕</button>
+                <button class="playlist-btn" onclick="moveUp(${i})" title="Move up" ${i === 0 ? 'disabled style="opacity:0.3"' : ''}>Up</button>
+                <button class="playlist-btn" onclick="moveDown(${i})" title="Move down" ${i === playlist.length - 1 ? 'disabled style="opacity:0.3"' : ''}>Down</button>
+                <button class="playlist-btn delete-btn" onclick="deleteVideo(${i})" title="Delete">Delete</button>
             </div>
-        `;
-        container.appendChild(div);
+        `; container.appendChild(div);
     });
 }
 
@@ -637,7 +631,7 @@ function moveDown(index) {
 }
 
 function deleteVideo(index) {
-    if (confirm('삭제하시겠습니까?')) {
+    if (confirm('?????癲ル슢???숈춿??β뼯援?臾뚰겫????????')) {
         playlist.splice(index, 1);
         savePlaylist();
 
@@ -800,6 +794,14 @@ function updateTimerDisplay() {
     }
 }
 
+function resetTimer() {
+    if (confirm('운동 시간을 초기화하시겠습니까?')) {
+        totalExerciseTime = 0;
+        localStorage.setItem(STORAGE_KEYS.EXERCISE_TIME, 0);
+        updateTimerDisplay();
+    }
+}
+
 /* =========================================
    Motion Detection Logic
    ========================================= */
@@ -862,10 +864,13 @@ function startPoseDetection() {
                     skeletonRenderer.draw(landmarks);
                 }
 
-                // Analyze Motion
+                // Analyze Motion (Only when video is playing)
                 if (motionAnalyzer) {
-                    const score = motionAnalyzer.update(landmarks);
-                    if (scoreDisplay) scoreDisplay.textContent = `SCORE: ${score}`;
+                    // Check if player is playing (State 1)
+                    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                        const score = motionAnalyzer.update(landmarks);
+                        if (scoreDisplay) scoreDisplay.textContent = `SCORE: ${score}`;
+                    }
                 }
             }
 
@@ -918,6 +923,7 @@ window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 window.onPlayerReady = onPlayerReady;
 window.onPlayerStateChange = onPlayerStateChange;
 window.onPlayerError = onPlayerError;
+window.resetTimer = resetTimer;
 
 // Inject YouTube API Script dynamically to ensure callback is ready
 const tag = document.createElement('script');
