@@ -549,6 +549,13 @@ function updatePlaylistUI() {
     playlist.forEach((v, i) => {
         const div = document.createElement('div');
         div.className = 'playlist-item' + (i === currentIndex ? ' active' : '');
+        div.draggable = true;
+        div.ondragstart = (e) => handleDragStart(e, i);
+        div.ondragover = (e) => handleDragOver(e);
+        div.ondrop = (e) => handleDrop(e, i);
+        div.ondragenter = (e) => handleDragEnter(e);
+        div.ondragleave = (e) => handleDragLeave(e);
+
         div.innerHTML = `
             <div class="item-info" onclick="playVideo(${i})">
                 ${i + 1}. ${v.title}
@@ -625,27 +632,84 @@ function moveDown(index) {
 }
 
 function deleteVideo(index) {
-    if (confirm('?????癲ル슢???숈춿??β뼯援?臾뚰겫????????')) {
+    if (confirm('정말 삭제하시겠습니까?')) {
         playlist.splice(index, 1);
         savePlaylist();
-
-
 
         if (index < currentIndex) currentIndex--;
         else if (index === currentIndex) {
             // Deleted currently playing video
             if (playlist.length > 0) {
-
                 currentIndex = index % playlist.length;
                 playVideo(currentIndex);
             } else {
                 ytPlayer.stopVideo();
                 currentIndex = 0;
-
             }
         }
         updatePlaylistUI();
         updateNextVideoUI();
+    }
+}
+
+// Drag and Drop Handlers
+let dragSrcIndex = -1;
+
+function handleDragStart(e, index) {
+    dragSrcIndex = index;
+    e.target.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault(); // Necessary. Allows us to drop.
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter(e) {
+    e.target.closest('.playlist-item').classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+    e.target.closest('.playlist-item').classList.remove('drag-over');
+}
+
+function handleDrop(e, dropIndex) {
+    if (e.stopPropagation) {
+        e.stopPropagation(); // stops the browser from redirecting.
+    }
+
+    // Don't do anything if dropping the same column we're dragging.
+    if (dragSrcIndex !== dropIndex) {
+        // Reorder playlist
+        const item = playlist.splice(dragSrcIndex, 1)[0];
+        playlist.splice(dropIndex, 0, item);
+
+        // Update currentIndex
+        if (currentIndex === dragSrcIndex) {
+            currentIndex = dropIndex;
+        } else if (currentIndex > dragSrcIndex && currentIndex <= dropIndex) {
+            currentIndex--;
+        } else if (currentIndex < dragSrcIndex && currentIndex >= dropIndex) {
+            currentIndex++;
+        }
+
+        savePlaylist();
+        updatePlaylistUI();
+        updateNextVideoUI();
+    }
+
+    return false;
+}
+
+function resetPlaylistToDefault() {
+    if (confirm('재생목록을 초기화하시겠습니까? 현재 변경사항이 모두 사라지고 기본 목록으로 복구됩니다.')) {
+        localStorage.removeItem(STORAGE_KEYS.PLAYLIST);
+        loadPlaylistData(); // Reload from txt
+        alert('초기화되었습니다.');
     }
 }
 
@@ -918,6 +982,17 @@ window.onPlayerReady = onPlayerReady;
 window.onPlayerStateChange = onPlayerStateChange;
 window.onPlayerError = onPlayerError;
 window.resetTimer = resetTimer;
+window.resetPlaylistToDefault = resetPlaylistToDefault;
+
+// ESC key to close modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('playlistModal');
+        if (modal && modal.classList.contains('active')) {
+            togglePlaylist();
+        }
+    }
+});
 
 // Inject YouTube API Script dynamically to ensure callback is ready
 const tag = document.createElement('script');
