@@ -189,7 +189,8 @@ function tryCreatePlayer() {
             autoplay: 1,
             controls: 1,
             playsinline: 1,
-            rel: 0
+            rel: 0,
+            mute: 1 // Auto-play on mobile requires mute
         },
         events: {
             onReady: onPlayerReady,

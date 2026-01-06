@@ -15,16 +15,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
     <!-- CSS (Separated) -->
-    <link rel="stylesheet" href="style.css?v=final_fix_v7">
+    <link rel="stylesheet" href="style.css?v=final_fix_v9">
 </head>
 
 <body>
     <div class="container overlay-mode">
-        <!-- Exercise Timer (Fixed) -->
+        <!-- Top Left Controls (Timer & Score) -->
         <div class="top-left-controls">
-            <div class="refresh-overlay" onclick="resetTimer()" title="타이머 리셋">
-                <span class="material-symbols-outlined">refresh</span>
-            </div>
             <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
             <div id="score" class="score-overlay">SCORE: 0</div>
         </div>
@@ -35,12 +32,8 @@
             <div class="player-wrapper">
                 <div id="player"></div>
 
-                <!-- Exercise Timer -->
-
-
-                <!-- Desktop Speed Controls -->
+                <!-- Desktop Speed Controls (0.5x removed) -->
                 <div class="speed-overlay">
-
                     <button class="speed-btn" data-speed="0.75">0.75x</button>
                     <button class="speed-btn active" data-speed="1">1x</button>
                     <button class="speed-btn" data-speed="1.25">1.25x</button>
@@ -67,7 +60,7 @@
                     <div class="speed-menu" id="speedMenu">
                         <div class="speed-menu-title">재생 속도</div>
                         <div class="speed-options">
-
+                            <!-- 0.5x removed -->
                             <button class="speed-btn" data-speed="0.75">0.75x</button>
                             <button class="speed-btn active" data-speed="1">1x</button>
                             <button class="speed-btn" data-speed="1.25">1.25x</button>
@@ -163,7 +156,7 @@
     <!-- Scripts -->
     <script src="https://www.youtube.com/iframe_api"></script>
     <!-- YouTube API injected by script.js -->
-    <script type="module" src="script.js?v=final_fix_v8"></script>
+    <script type="module" src="script.js?v=final_fix_v9"></script>
 </body>
 
 </html>
