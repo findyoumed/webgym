@@ -767,3 +767,9 @@ window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 window.onPlayerReady = onPlayerReady;
 window.onPlayerStateChange = onPlayerStateChange;
 window.onPlayerError = onPlayerError;
+
+// Inject YouTube API Script dynamically to ensure callback is ready
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+const firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
