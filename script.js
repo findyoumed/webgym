@@ -31,6 +31,7 @@
 
 import { PoseDetector } from './js/pose-detector.js';
 import { MotionAnalyzer } from './js/motion-analyzer.js';
+import { Renderer } from './js/renderer.js';
 
 /* Global State */
 let playlist = [{ id: '372ByJedKsY', title: '기본 비디오(로딩 중...)' }];
@@ -748,6 +749,128 @@ function setupEventListeners() {
 
 
 
+
+
+/* =========================================
+   Exercise Timer Logic
+   ========================================= */
+function initExerciseTimer() {
+    const savedTime = localStorage.getItem(STORAGE_KEYS.EXERCISE_TIME);
+    if (savedTime) {
+        totalExerciseTime = parseInt(savedTime, 10);
+    }
+    updateTimerDisplay();
+
+    // Start counting when video is playing
+    timerInterval = setInterval(() => {
+        if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+            totalExerciseTime++;
+            updateTimerDisplay();
+            if (totalExerciseTime % 10 === 0) { // Save every 10s
+                localStorage.setItem(STORAGE_KEYS.EXERCISE_TIME, totalExerciseTime);
+            }
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const timerDiv = document.getElementById('exerciseTimer');
+    if (!timerDiv) return;
+
+    const h = Math.floor(totalExerciseTime / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalExerciseTime % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalExerciseTime % 60).toString().padStart(2, '0');
+
+    timerDiv.textContent = `${h}:${m}:${s}`;
+}
+
+/* =========================================
+   Motion Detection Logic
+   ========================================= */
+async function initMotionDetection() {
+    try {
+        poseDetector = new PoseDetector();
+        const success = await poseDetector.initialize();
+        if (!success) {
+            console.error('PoseDetector initialization failed');
+            return;
+        }
+
+        motionAnalyzer = new MotionAnalyzer();
+        skeletonRenderer = new Renderer(document.getElementById('output_canvas').getContext('2d'));
+
+        // Apply saved sensitivity
+        const savedSensitivity = localStorage.getItem(STORAGE_KEYS.SENSITIVITY);
+        if (savedSensitivity) {
+            motionAnalyzer.sensitivity = parseInt(savedSensitivity, 10) * 10;
+        }
+
+        // console.log('Motion detection initialized');
+    } catch (e) {
+        console.error('Failed to init motion detection', e);
+    }
+}
+
+function startPoseDetection() {
+    if (!poseDetector || !webcamStream) return;
+
+    isPoseTracking = true;
+    const webcam = document.getElementById('webcam');
+    const canvas = document.getElementById('output_canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    canvas.width = webcam.videoWidth || 1280;
+    canvas.height = webcam.videoHeight || 720;
+    canvas.style.display = 'block';
+    if (scoreDisplay) scoreDisplay.style.display = 'block';
+
+    detectLoop();
+
+    function detectLoop() {
+        if (!isPoseTracking) return;
+
+        poseDetector.detect(webcam, performance.now(), (result) => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (result.landmarks && result.landmarks.length > 0) {
+                const landmarks = result.landmarks[0];
+
+                // Draw Skeleton
+                if (skeletonRenderer) {
+                    skeletonRenderer.draw(landmarks);
+                }
+
+                // Analyze Motion
+                if (motionAnalyzer) {
+                    const score = motionAnalyzer.update(landmarks);
+                    if (scoreDisplay) scoreDisplay.textContent = `SCORE: ${score}`;
+                }
+            }
+
+            requestAnimationFrame(detectLoop);
+        });
+    }
+}
+
+function stopPoseDetection() {
+    isPoseTracking = false;
+    const canvas = document.getElementById('output_canvas');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+
+    if (canvas) canvas.style.display = 'none';
+    if (scoreDisplay) scoreDisplay.style.display = 'none';
+}
+
+function updateSensitivityFromSlider(value) {
+    const val = parseInt(value, 10);
+    localStorage.setItem(STORAGE_KEYS.SENSITIVITY, val);
+
+    if (motionAnalyzer) {
+        motionAnalyzer.sensitivity = val * 10;
+        // console.log('Sensitivity updated:', motionAnalyzer.sensitivity);
+    }
+}
 
 // Expose functions to global scope for HTML onclick handlers
 window.toggleWebcam = toggleWebcam;
