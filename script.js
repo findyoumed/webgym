@@ -222,20 +222,31 @@ function onPlayerReady(e) {
     e.target.setVolume(100);
     e.target.playVideo();
 
-    // Force play retry aggressively (Try for 5 seconds)
+    // Force play retry aggressively (Try for 10 seconds)
     let retryCount = 0;
     const forcePlayInterval = setInterval(() => {
         if (e.target && typeof e.target.getPlayerState === 'function') {
             const state = e.target.getPlayerState();
-            if (state !== 1) { // Not playing
-                e.target.unMute();
-                e.target.playVideo();
+
+            // If not playing, try again
+            if (state !== 1) {
+                // First 5 tries: Try with sound
+                if (retryCount < 5) {
+                    e.target.unMute();
+                    e.target.playVideo();
+                }
+                // After 5 tries (2.5s): Fallback to Muted Autoplay
+                else {
+                    console.warn('Autoplay blocked, trying muted...');
+                    e.target.mute();
+                    e.target.playVideo();
+                }
             } else {
                 clearInterval(forcePlayInterval); // Stop if playing
             }
         }
         retryCount++;
-        if (retryCount > 10) clearInterval(forcePlayInterval);
+        if (retryCount > 20) clearInterval(forcePlayInterval); // Stop after 10s
     }, 500);
 
     updateNextVideoUI();
@@ -409,13 +420,35 @@ function onPlayerStateChange(e) {
 
 function onPlayerError(e) {
     console.error('Player Error Code:', e.data);
-    errorCount++;
 
-    if (errorCount <= MAX_ERRORS) {
-        // console.log(`Retrying next video (${errorCount}/${MAX_ERRORS})...`);
+    // Show error overlay
+    const playerDiv = document.getElementById('player');
+    if (playerDiv) {
+        let overlay = document.querySelector('.player-error-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'player-error-overlay';
+            overlay.innerHTML = `
+                <h3>동영상을 재생할 수 없습니다</h3>
+                <p>앱 설정에 오류가 있을 수 있습니다.</p>
+                <button class="retry-btn" onclick="handleHardRefresh()">
+                    <span class="material-symbols-outlined">build</span>
+                    앱 복구 및 새로고침
+                </button>
+            `;
+            document.body.appendChild(overlay);
+        }
+        overlay.style.display = 'flex';
 
-        setTimeout(playNext, 1500);
+        // Auto-sanitize on error detection too
+        sanitizeStorage();
     }
+
+    // Still try to skip after a delay as a fallback, but give user time to see message
+    // errorCount++;
+    // if (errorCount <= MAX_ERRORS) {
+    //     setTimeout(playNext, 5000);
+    // }
 }
 
 function playVideo(index) {
@@ -476,7 +509,45 @@ function setSpeed(speed) {
     });
 }
 
+function sanitizeStorage() {
+    // 1. Validate LAST_INDEX
+    const lastIndex = localStorage.getItem(STORAGE_KEYS.LAST_INDEX);
+    if (lastIndex !== null) {
+        const parsed = parseInt(lastIndex, 10);
+        if (isNaN(parsed) || parsed < 0) {
+            console.warn('Invalid LAST_INDEX found, resetting to 0');
+            localStorage.setItem(STORAGE_KEYS.LAST_INDEX, 0);
+        }
+    }
+
+    // 2. Validate LAST_TIME
+    const lastTime = localStorage.getItem(STORAGE_KEYS.LAST_TIME);
+    if (lastTime !== null) {
+        const parsed = parseFloat(lastTime);
+        if (isNaN(parsed) || parsed < 0) {
+            console.warn('Invalid LAST_TIME found, resetting to 0');
+            localStorage.setItem(STORAGE_KEYS.LAST_TIME, 0);
+        }
+    }
+
+    // 3. Validate PLAYLIST
+    const storedPlaylist = localStorage.getItem(STORAGE_KEYS.PLAYLIST);
+    if (storedPlaylist) {
+        try {
+            const parsed = JSON.parse(storedPlaylist);
+            if (!Array.isArray(parsed) || parsed.length === 0) {
+                console.warn('Invalid PLAYLIST format, clearing storage');
+                localStorage.removeItem(STORAGE_KEYS.PLAYLIST);
+            }
+        } catch (e) {
+            console.warn('Corrupt PLAYLIST JSON, clearing storage');
+            localStorage.removeItem(STORAGE_KEYS.PLAYLIST);
+        }
+    }
+}
+
 function loadPlaylist() {
+    sanitizeStorage(); // Run validation before loading
 
     // 1. Try to load from LocalStorage first (User's custom playlist)
     const stored = localStorage.getItem(STORAGE_KEYS.PLAYLIST);
@@ -983,6 +1054,10 @@ window.onPlayerStateChange = onPlayerStateChange;
 window.onPlayerError = onPlayerError;
 window.resetTimer = resetTimer;
 window.resetPlaylistToDefault = resetPlaylistToDefault;
+window.handleHardRefresh = function () {
+    sanitizeStorage();
+    location.reload(true);
+};
 
 // ESC key to close modal
 document.addEventListener('keydown', (e) => {
@@ -996,6 +1071,6 @@ document.addEventListener('keydown', (e) => {
 
 // Inject YouTube API Script dynamically to ensure callback is ready
 const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
+tag.src = "https://www.youtube.com/iframe_api?v=" + new Date().getTime();
 const firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);

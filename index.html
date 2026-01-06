@@ -9,6 +9,9 @@
     <!-- Meta Tags -->
     <meta name="description" content="유튜브 영상을 보며 웹캠으로 자세를 확인하는 홈트레이닝 도우미." />
     <meta name="theme-color" content="#0a0e27" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -22,7 +25,7 @@
     <div class="container overlay-mode">
         <!-- Top Left Controls (Timer & Score) -->
         <div class="top-left-controls">
-            <div class="refresh-overlay" onclick="location.reload()" title="새로고침">
+            <div class="refresh-overlay" onclick="location.reload(true)" title="강력 새로고침">
                 <span class="material-symbols-outlined">refresh</span>
             </div>
             <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
@@ -162,7 +165,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://www.youtube.com/iframe_api"></script>
+
     <!-- YouTube API injected by script.js -->
     <script type="module" src="script.js?v=final_fix_v9"></script>
 </body>
