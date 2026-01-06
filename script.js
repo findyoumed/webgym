@@ -10,7 +10,13 @@
             msg.includes('GL version') ||
             msg.includes('OpenGL error checking') ||
             msg.includes('Graph successfully started') ||
-            msg.includes('Successfully created a WebGL context');
+        return msg.includes('gl_context') ||
+            msg.includes('GL version') ||
+            msg.includes('OpenGL error checking') ||
+            msg.includes('Graph successfully started') ||
+            msg.includes('Successfully created a WebGL context') ||
+            msg.includes('RET_CHECK failure') ||
+            msg.includes('texImage2D: no video');
     }
 
     console.log = function (...args) {
@@ -763,7 +769,7 @@ function initExerciseTimer() {
 
     // Start counting when video is playing
     timerInterval = setInterval(() => {
-        if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+        if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
             totalExerciseTime++;
             updateTimerDisplay();
             if (totalExerciseTime % 10 === 0) { // Save every 10s
@@ -797,7 +803,7 @@ async function initMotionDetection() {
         }
 
         motionAnalyzer = new MotionAnalyzer();
-        skeletonRenderer = new Renderer(document.getElementById('output_canvas').getContext('2d'));
+        skeletonRenderer = new Renderer(document.getElementById('output_canvas'));
 
         // Apply saved sensitivity
         const savedSensitivity = localStorage.getItem(STORAGE_KEYS.SENSITIVITY);
@@ -829,6 +835,11 @@ function startPoseDetection() {
 
     function detectLoop() {
         if (!isPoseTracking) return;
+
+        if (webcam.readyState < 2 || webcam.videoWidth === 0) {
+            requestAnimationFrame(detectLoop);
+            return;
+        }
 
         poseDetector.detect(webcam, performance.now(), (result) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
