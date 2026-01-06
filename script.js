@@ -217,6 +217,9 @@ function onPlayerReady(e) {
         }
     }
 
+    // Force play and unmute
+    e.target.unMute();
+    e.target.setVolume(100);
     e.target.playVideo();
 
     // Force play retry
