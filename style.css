@@ -424,278 +424,61 @@ input[type=range]::-webkit-slider-thumb {
     justify-content: center;
   }
 
-  /* Hide default input on mobile */
-  .opacity-container input[type=range] {
-    display: none;
-  }
-}
-
-/* =========================================
-   Playlist Modal
-   ========================================= */
-.playlist-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(20, 26, 58, 0.98);
-  padding: 30px;
-  border-radius: 15px;
-  width: 650px;
-  max-height: 80vh;
-  overflow-y: auto;
-  display: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  z-index: 2000;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
-
-@media (max-width: 768px) {
-  .playlist-modal {
-    width: 100%;
-    left: 0;
-    top: 10%;
-    transform: none;
-    max-height: 80vh;
-    border-radius: 12px;
-    padding: 16px;
-    overflow-y: auto;
-  }
-
-  #playlistItems {
-    overflow-y: auto;
-  }
-}
-
-.playlist-modal.active {
-  display: block;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.close-btn {
-  background: transparent;
-  color: white;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.playlist-item {
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.3);
-  margin-bottom: 10px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.playlist-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.playlist-item.active {
-  background: rgba(0, 212, 255, 0.2);
-  border-left: 3px solid #00d4ff;
-}
-
-.item-info {
-  flex: 1;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background: rgba(255, 0, 0, 0.3);
-  color: #ff5555;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.add-form {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.input-field {
-  width: 100%;
-  padding: 12px;
-  margin: 5px 0;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.3);
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .playlist-modal {
-    width: calc(100% - 24px);
-    max-height: calc(100vh - 24px);
-    left: 0;
-    right: 0;
-    top: 12px;
-    margin: 0 12px;
-    transform: none;
-    border-radius: 12px;
-    padding: 18px;
-    overflow-y: auto;
-  }
-
-  .modal-header {
-    position: sticky;
-    top: 0;
-    background: rgba(20, 26, 58, 0.98);
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    z-index: 1;
-  }
-
-  #playlistItems {
-    max-height: calc(100vh - 220px);
-    overflow-y: auto;
-  }
-
-  .item-info {
-    font-size: 14px;
-    white-space: normal;
-    word-break: break-word;
-  }
-}
-
-/* =========================================
-   Mobile Responsiveness
-   ========================================= */
-@media (max-width: 768px) {
-
-  .container:not(.overlay-mode) {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  .speed-overlay {
-    display: none;
-  }
-
-  .settings-container {
-    display: block;
-  }
-
-  .controls {
-    width: 100%;
-    justify-content: center;
-    gap: 1px;
-    padding: 6px 2px;
-    overflow: visible;
-  }
-
-  .ctrl-btn {
-    width: 30px;
-    height: 30px;
-    min-width: 0;
-    padding: 0;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-  }
-
-  .ctrl-btn span {
-    font-size: 18px;
-    margin: 0;
-  }
-
-  .btn-text,
-  .controls>div[style*="width:1px"] {
-    display: none !important;
-  }
-
-  /* Slider Label (Mobile) */
-  .slider-label {
-    display: block;
+  /* Opacity Slider Wrapper (Mobile) - Replaces input styling */
+  .opacity-container .slider-wrapper {
     position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-    pointer-events: none;
-  }
-
-  /* Speech Bubble Style for Sliders */
-  .opacity-container .slider-wrapper,
-  .sensitivity-container .slider-wrapper {
-    display: none;
-    position: absolute;
-    bottom: 100%;
-    /* Position above the button */
+    bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
     width: 140px;
-    height: 50px;
-    /* Increased height for label + slider */
-    background: rgba(20, 26, 58, 0.98);
-    /* Dark blue background */
-    padding: 15px 10px 5px 10px;
-    /* Top padding for label */
-    border-radius: 12px;
-    z-index: 9999;
+    height: 40px;
+
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 20px;
+    padding: 0 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    margin-bottom: 15px;
-    /* Space from button */
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s ease;
   }
 
-  /* Arrow for Speech Bubble */
-  .opacity-container .slider-wrapper::after,
-  .sensitivity-container .slider-wrapper::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 8px 8px 0;
-    border-style: solid;
-    border-color: rgba(20, 26, 58, 0.98) transparent transparent transparent;
+  .opacity-container.active .slider-wrapper {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    bottom: 60px;
   }
 
-  .opacity-container.active .slider-wrapper,
-  .sensitivity-container.active .slider-wrapper {
-    display: block;
-  }
-
-  .opacity-container .slider-label {
-    color: #00d4ff;
-    top: 2px;
-    /* Adjust label position inside bubble */
-  }
-
-  .sensitivity-container .slider-label {
-    color: #FDB927;
-    top: 2px;
-    /* Adjust label position inside bubble */
-  }
-
-  .opacity-container input[type=range],
-  .sensitivity-container input[type=range] {
+  .opacity-container input[type=range] {
     display: block;
     width: 100%;
     height: 100%;
+    background: transparent;
     position: static;
     transform: none;
     margin: 0;
     padding: 0;
+  }
+
+  .opacity-container input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+  }
+
+  .opacity-container input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00d4ff;
+    margin-top: -8px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   }
 
   @media (max-width: 768px) {
@@ -885,13 +668,69 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 @media (max-width: 768px) {
+
+  /* Show Label on Mobile */
   .slider-label {
-    display: none;
+    display: block;
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
   }
 
+  .opacity-container .slider-label {
+    color: #00d4ff;
+  }
+
+  .sensitivity-container .slider-label {
+    color: #00d4ff;
+  }
+
+  /* Changed to Blue */
+
   /* Mobile Sensitivity Slider */
-  .sensitivity-container input[type=range] {
+  .sensitivity-container .slider-wrapper {
     display: none;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-90%);
+    /* Shifted left */
+    width: 140px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 0 15px;
+    border-radius: 20px;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .sensitivity-container.active .slider-wrapper {
+    display: block;
+  }
+
+  .sensitivity-container input[type=range] {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Override Sensitivity Color to Blue on Mobile */
+  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
+    background: #00d4ff !important;
+  }
+
+  .sensitivity-container input[type=range]::-webkit-slider-thumb {
+    border-color: #00d4ff !important;
   }
 }
 
