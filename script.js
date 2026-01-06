@@ -850,10 +850,13 @@ function startPoseDetection() {
                     skeletonRenderer.draw(landmarks);
                 }
 
-                // Analyze Motion
+                // Analyze Motion (Only when video is playing)
                 if (motionAnalyzer) {
-                    const score = motionAnalyzer.update(landmarks);
-                    if (scoreDisplay) scoreDisplay.textContent = `SCORE: ${score}`;
+                    // Check if player is playing (State 1)
+                    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
+                        const score = motionAnalyzer.update(landmarks);
+                        if (scoreDisplay) scoreDisplay.textContent = `SCORE: ${score}`;
+                    }
                 }
             }
 
