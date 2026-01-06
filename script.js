@@ -145,7 +145,7 @@ function loadSettings() {
 
 function savePlaybackState() {
 
-    if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
 
         localStorage.setItem(STORAGE_KEYS.LAST_INDEX, currentIndex);
         localStorage.setItem(STORAGE_KEYS.LAST_TIME, player.getCurrentTime());
