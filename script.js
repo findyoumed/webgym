@@ -222,12 +222,21 @@ function onPlayerReady(e) {
     e.target.setVolume(100);
     e.target.playVideo();
 
-    // Force play retry
-    setTimeout(() => {
-        if (e.target.getPlayerState() !== 1) { // 1 = Playing
-            e.target.playVideo();
+    // Force play retry aggressively (Try for 5 seconds)
+    let retryCount = 0;
+    const forcePlayInterval = setInterval(() => {
+        if (e.target && typeof e.target.getPlayerState === 'function') {
+            const state = e.target.getPlayerState();
+            if (state !== 1) { // Not playing
+                e.target.unMute();
+                e.target.playVideo();
+            } else {
+                clearInterval(forcePlayInterval); // Stop if playing
+            }
         }
-    }, 1000);
+        retryCount++;
+        if (retryCount > 10) clearInterval(forcePlayInterval);
+    }, 500);
 
     updateNextVideoUI();
     updatePlaylistUI();
