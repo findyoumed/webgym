@@ -424,23 +424,9 @@ input[type=range]::-webkit-slider-thumb {
     justify-content: center;
   }
 
+  /* Hide default input on mobile */
   .opacity-container input[type=range] {
     display: none;
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 0 15px;
-    border-radius: 20px;
-    z-index: 9999;
-  }
-
-  .container.overlay-mode~.controls .opacity-container.active input[type=range] {
-    display: block;
-    pointer-events: auto;
   }
 }
 
@@ -634,54 +620,82 @@ input[type=range]::-webkit-slider-thumb {
     display: none !important;
   }
 
-  .opacity-container input[type=range] {
+  /* Slider Label (Mobile) */
+  .slider-label {
+    display: block;
     position: absolute;
-    bottom: 50px;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+  }
+
+  /* Speech Bubble Style for Sliders */
+  .opacity-container .slider-wrapper,
+  .sensitivity-container .slider-wrapper {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    /* Position above the button */
     left: 50%;
     transform: translateX(-50%);
     width: 140px;
-    height: 40px;
-
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 20px;
-    padding: 0 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    height: 50px;
+    /* Increased height for label + slider */
+    background: rgba(20, 26, 58, 0.98);
+    /* Dark blue background */
+    padding: 15px 10px 5px 10px;
+    /* Top padding for label */
+    border-radius: 12px;
     z-index: 9999;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: all 0.2s ease;
-
-    -webkit-appearance: slider-horizontal;
-    appearance: none;
-    writing-mode: horizontal-tb;
-    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px;
+    /* Space from button */
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  .opacity-container.active input[type=range] {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    bottom: 60px;
+  /* Arrow for Speech Bubble */
+  .opacity-container .slider-wrapper::after,
+  .sensitivity-container .slider-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: rgba(20, 26, 58, 0.98) transparent transparent transparent;
   }
 
-  .opacity-container input[type=range]::-webkit-slider-runnable-track {
+  .opacity-container.active .slider-wrapper,
+  .sensitivity-container.active .slider-wrapper {
+    display: block;
+  }
+
+  .opacity-container .slider-label {
+    color: #00d4ff;
+    top: 2px;
+    /* Adjust label position inside bubble */
+  }
+
+  .sensitivity-container .slider-label {
+    color: #FDB927;
+    top: 2px;
+    /* Adjust label position inside bubble */
+  }
+
+  .opacity-container input[type=range],
+  .sensitivity-container input[type=range] {
+    display: block;
     width: 100%;
-    height: 4px;
-    background: #555;
-    border-radius: 2px;
-  }
-
-  .opacity-container input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #00d4ff;
-    margin-top: -8px;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    height: 100%;
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
   }
 
   @media (max-width: 768px) {
@@ -878,23 +892,6 @@ input[type=range]::-webkit-slider-thumb {
   /* Mobile Sensitivity Slider */
   .sensitivity-container input[type=range] {
     display: none;
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-90%);
-    /* Shifted left */
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 0 15px;
-    border-radius: 20px;
-    z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .sensitivity-container.active input[type=range] {
-    display: block;
-    pointer-events: auto;
   }
 }
 
