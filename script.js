@@ -160,14 +160,10 @@ function onYouTubeIframeAPIReady() {
 function onPlaylistLoaded() {
     isPlaylistLoaded = true;
 
-
-
     // Validate currentIndex against the loaded playlist
     if (currentIndex >= playlist.length || currentIndex < 0) {
         currentIndex = 0;
     }
-
-
 
     tryCreatePlayer();
 }
@@ -175,9 +171,9 @@ function onPlaylistLoaded() {
 function tryCreatePlayer() {
     if (!isYoutubeApiReady || player) return;
 
-    let firstVideoId = '372ByJedKsY'; // ????????癲?
+    let firstVideoId = '372ByJedKsY'; // Default Video
 
-    // ??????????????깅렰 ??꿔꺂??틝???????ID ????살퓢癲??
+    // Use saved index if available
     if (playlist && playlist.length > 0) {
         if (currentIndex < 0 || currentIndex >= playlist.length) currentIndex = 0;
         if (playlist[currentIndex] && playlist[currentIndex].id) {
@@ -185,22 +181,17 @@ function tryCreatePlayer() {
         }
     }
 
-
-    // console.log(`Starting Player: ${firstVideoId}`);
-
-
-    // YT.Player ???袁⑸즴???(??????轅붽틓??影?뽧걤???????쇨덧???轅붽틓???????꿔꺂??????癲ル슢???援?????Β?レ른???? ????썹땟???????????鶯ㅺ동???????
+    // Create YT.Player
     player = new YT.Player('player', {
         height: '100%',
         width: '100%',
         videoId: firstVideoId,
-
         playerVars: {
             autoplay: 1,
-
             controls: 1,
-            playsinline: 1, // ?轅붽틓??熬곥끇釉?????????밸븶?????거?쭛????ш끽維??λ궔? ?????癲????
-            rel: 0
+            playsinline: 1,
+            rel: 0,
+            origin: window.location.origin // Fix for Vercel
         },
         events: {
             onReady: onPlayerReady,
@@ -211,30 +202,20 @@ function tryCreatePlayer() {
 }
 
 function onPlayerReady(e) {
-
-    // console.log('Player Ready!');
-
-
-    // ?????욱룑????ㅼ뒧?????(5???????鶯???????
+    // Resume playback logic
     const savedTime = localStorage.getItem(STORAGE_KEYS.LAST_TIME);
     if (savedTime) {
         const t = parseFloat(savedTime);
         if (!isNaN(t) && t > 5) {
-
-            // console.log(`Seeking to ${t}s`);
-
             e.target.seekTo(t);
         }
     }
 
     e.target.playVideo();
 
-
-    // ???癲?????????怨뚯댅 ??1?????????
+    // Force play retry
     setTimeout(() => {
         if (e.target.getPlayerState() !== 1) { // 1 = Playing
-            // console.log('Force Play Retry');
-
             e.target.playVideo();
         }
     }, 1000);
@@ -242,18 +223,13 @@ function onPlayerReady(e) {
     updateNextVideoUI();
     updatePlaylistUI();
 
-
-
-    // Watcher: Ensure video keeps playing (Watcher)
+    // Watcher: Ensure video keeps playing
     if (!window.playerWatcher) {
         window.playerWatcher = setInterval(() => {
             if (player && typeof player.getPlayerState === 'function') {
                 const state = player.getPlayerState();
                 // -1: Unstarted, 5: Video cued
                 if (state === -1 || state === 5) {
-
-                    // console.log('Watcher: Forcing Play...');
-
                     player.playVideo();
                 }
             }

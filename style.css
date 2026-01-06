@@ -413,192 +413,6 @@ input[type=range]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
-
-/* --- Mobile Adjustments --- */
-@media (max-width: 768px) {
-
-  /* Change split mode grid layout to vertical (rows) on mobile */
-  .container:not(.overlay-mode) {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
-
-  /* Hide desktop speed overlay, show mobile settings */
-  .speed-overlay {
-    display: none;
-  }
-
-  .settings-container {
-    display: block;
-  }
-
-  /* Opacity Controls */
-  .opacity-container {
-    border-left: none;
-    margin-left: 2px;
-    padding-left: 2px;
-    width: 30px;
-    height: 30px;
-    justify-content: center;
-  }
-
-  .opacity-container span {
-    font-size: 18px !important;
-  }
-
-  /* Mobile Opacity Slider - Popup Style with Label */
-  .opacity-container .slider-wrapper {
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    border-radius: 20px;
-    padding: 0 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: all 0.2s ease;
-    display: none;
-  }
-
-  /* Show slider when active */
-  .opacity-container.active .slider-wrapper {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    bottom: 60px;
-    display: block;
-  }
-
-  .opacity-container input[type=range] {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    position: static;
-    transform: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Slider track styling */
-  .opacity-container input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    background: #555;
-    border-radius: 2px;
-  }
-
-  /* Slider thumb styling */
-  .opacity-container input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #00d4ff;
-    margin-top: -8px;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  }
-
-  /* Mobile Layout - Overlay Mode */
-  .container.overlay-mode {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background: #000;
-  }
-
-  /* 1. Video Panel: Center Positioning */
-  .container.overlay-mode .video-panel {
-    position: relative;
-    width: 100%;
-    height: auto;
-    z-index: 1;
-  }
-
-  /* 2. Player Area: 16:9 Ratio Fixed */
-  .container.overlay-mode .player-wrapper {
-    width: 100%;
-    aspect-ratio: 16/9;
-    position: relative;
-  }
-
-  .container.overlay-mode #player {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* 3. Webcam Panel: Overlap Exactly on Player */
-  .container.overlay-mode .webcam-panel {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    aspect-ratio: 16/9;
-    transform: translateY(-50%);
-    z-index: 5;
-    height: auto;
-    pointer-events: none;
-  }
-
-  /* Next Video Bar Positioning */
-  .container.overlay-mode .next-video-bar {
-    position: absolute;
-    bottom: -50px;
-    width: 100%;
-    z-index: 10;
-  }
-
-  /* Webcam Video Aspect Ratio */
-  .container.overlay-mode #webcam {
-    object-fit: cover;
-  }
-
-  /* Hide desktop speed overlay on mobile */
-  .speed-overlay {
-    display: none;
-  }
-
-  /* Show settings menu on mobile */
-  .settings-container {
-    display: block;
-  }
-
-  /* Mobile Control Bar */
-  .controls {
-    width: 98%;
-    justify-content: center;
-    padding: 8px 4px;
-    bottom: 5px;
-    gap: 4px;
-  }
-
-  .ctrl-btn {
-    padding: 6px;
-    font-size: 0;
-    min-width: 32px;
-    justify-content: center;
-  }
-
-  .ctrl-btn .material-symbols-outlined {
-    font-size: 20px;
-    margin: 0;
-  }
-
-  .btn-text {
-    display: none;
-  }
-}
-
 /* Motion Detection Canvas */
 #output_canvas {
   position: absolute;
@@ -721,75 +535,6 @@ input[type=range]::-webkit-slider-thumb {
 .sensitivity-container .slider-label {
   color: #00d4ff;
   font-size: 10px;
-}
-
-@media (max-width: 768px) {
-
-  /* Show Label on Mobile */
-  .slider-label {
-    display: block;
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-    pointer-events: none;
-  }
-
-  .opacity-container .slider-label {
-    color: #00d4ff;
-    font-size: 12px !important;
-  }
-
-  .sensitivity-container .slider-label {
-    color: #00d4ff;
-    font-size: 12px !important;
-  }
-
-  /* Changed to Blue */
-
-  /* Mobile Sensitivity Slider */
-  .sensitivity-container .slider-wrapper {
-    display: none;
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-90%);
-    /* Shifted left */
-    width: 140px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.9);
-    padding: 0 15px;
-    border-radius: 20px;
-    z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  }
-
-  .sensitivity-container.active .slider-wrapper {
-    display: block;
-  }
-
-  .sensitivity-container input[type=range] {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    position: static;
-    transform: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Override Sensitivity Color to Blue on Mobile */
-  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
-    background: #00d4ff !important;
-  }
-
-  .sensitivity-container input[type=range]::-webkit-slider-thumb {
-    border-color: #00d4ff !important;
-  }
 }
 
 /* =========================================
@@ -944,44 +689,289 @@ input[type=range]::-webkit-slider-thumb {
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.3);
   color: white;
-  font-family: inherit;
-  font-size: 14px;
 }
 
-.input-field::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+.add-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  background: #00d4ff;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.input-field:focus {
-  outline: none;
-  border-color: #00d4ff;
-  background: rgba(0, 0, 0, 0.5);
+.add-btn:hover {
+  background: #33ddff;
 }
 
+/* --- Mobile Adjustments --- */
 @media (max-width: 768px) {
-  .playlist-modal {
-    width: 90%;
-    max-height: 70vh;
-    padding: 20px;
-  }
 
-  .modal-header h2 {
-    font-size: 18px;
-  }
-
-  .playlist-item {
-    padding: 12px;
+  /* Change split mode grid layout to vertical (rows) on mobile */
+  .container:not(.overlay-mode) {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    height: 100vh;
+    width: 100vw;
   }
 
-  .item-info {
+  .container:not(.overlay-mode) .panel {
     width: 100%;
-    margin-bottom: 8px;
+    height: 50% !important;
+    /* 강제로 높이 50% 할당 */
+    position: relative;
+    flex: 0 0 50%;
+    /* flex-grow, flex-shrink, flex-basis */
   }
 
-  .item-actions {
+  /* Hide desktop speed overlay, show mobile settings */
+  .speed-overlay {
+    display: none !important;
+  }
+
+  .settings-container {
+    display: block;
+  }
+
+  /* Opacity Controls */
+  .opacity-container {
+    border-left: none;
+    margin-left: 2px;
+    padding-left: 2px;
+    width: 32px;
+    height: 32px;
+    justify-content: center;
+  }
+
+  .opacity-container span {
+    font-size: 18px !important;
+  }
+
+  /* Mobile Opacity Slider - Popup Style with Label */
+  .opacity-container .slider-wrapper {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 20px;
+    padding: 0 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    display: none;
+  }
+
+  /* Show slider when active */
+  .opacity-container.active .slider-wrapper {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    bottom: 60px;
+    display: block;
+  }
+
+  .opacity-container input[type=range] {
+    display: block;
     width: 100%;
-    justify-content: flex-end;
+    height: 100%;
+    background: transparent;
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Slider track styling */
+  .opacity-container input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+  }
+
+  /* Slider thumb styling */
+  .opacity-container input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #00d4ff;
+    margin-top: -8px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Mobile Layout - Overlay Mode */
+  .container.overlay-mode {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #000;
+  }
+
+  /* 1. Video Panel: Center Positioning */
+  .container.overlay-mode .video-panel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+  }
+
+  /* 2. Player Area: 16:9 Ratio Fixed */
+  .container.overlay-mode .player-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+  }
+
+  .container.overlay-mode #player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 3. Webcam Panel: Overlap Exactly on Player */
+  .container.overlay-mode .webcam-panel {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 16/9;
+    transform: translateY(-50%);
+    z-index: 5;
+    height: auto;
+    pointer-events: none;
+  }
+
+  /* Next Video Bar Positioning */
+  .container.overlay-mode .next-video-bar {
+    position: absolute;
+    bottom: -50px;
+    width: 100%;
+    z-index: 10;
+  }
+
+  /* Webcam Video Aspect Ratio */
+  .container.overlay-mode #webcam {
+    object-fit: cover;
+  }
+
+  /* Mobile Control Bar - Compact Mode */
+  .controls {
+    width: 100%;
+    justify-content: space-between;
+    padding: 5px 2px;
+    bottom: 0;
+    gap: 2px;
+    overflow-x: hidden;
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  .ctrl-btn {
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    min-width: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  /* Active state background */
+  .ctrl-btn.active {
+    background: rgba(0, 212, 255, 0.2);
+    border: 1px solid #00d4ff;
+  }
+
+  .ctrl-btn .material-symbols-outlined {
+    font-size: 18px;
+    margin: 0;
+  }
+
+  .btn-text {
+    display: none;
+  }
+
+  /* Hide Divider on Mobile */
+  .controls>div[style*="width:1px"] {
+    display: none !important;
+  }
+
+  /* Show Label on Mobile */
+  .slider-label {
+    display: block;
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+  }
+
+  .opacity-container .slider-label {
+    color: #00d4ff;
+    font-size: 12px !important;
+  }
+
+  .sensitivity-container .slider-label {
+    color: #00d4ff;
+    font-size: 12px !important;
+  }
+
+  /* Mobile Sensitivity Slider */
+  .sensitivity-container .slider-wrapper {
+    display: none;
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-90%);
+    /* Shifted left */
+    width: 140px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 0 15px;
+    border-radius: 20px;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .sensitivity-container.active .slider-wrapper {
+    display: block;
+  }
+
+  .sensitivity-container input[type=range] {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    position: static;
+    transform: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Override Sensitivity Color to Blue on Mobile */
+  .sensitivity-container input[type=range]::-webkit-slider-runnable-track {
+    background: #00d4ff !important;
+  }
+
+  .sensitivity-container input[type=range]::-webkit-slider-thumb {
+    border-color: #00d4ff !important;
   }
 }
