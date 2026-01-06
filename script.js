@@ -555,7 +555,7 @@ function updatePlaylistUI() {
     playlist.forEach((v, i) => {
         const div = document.createElement('div');
         div.className = 'playlist-item' + (i === currentIndex ? ' active' : '');
-                div.innerHTML = `
+        div.innerHTML = `
             <div class="item-info" onclick="playVideo(${i})">
                 ${i + 1}. ${v.title}
             </div>
@@ -564,7 +564,7 @@ function updatePlaylistUI() {
                 <button class="playlist-btn" onclick="moveDown(${i})" title="Move down" ${i === playlist.length - 1 ? 'disabled style="opacity:0.3"' : ''}>Down</button>
                 <button class="playlist-btn delete-btn" onclick="deleteVideo(${i})" title="Delete">Delete</button>
             </div>
-        `;        container.appendChild(div);
+        `; container.appendChild(div);
     });
 }
 
@@ -586,7 +586,7 @@ function updateNextVideoUI() {
 
         }
     } else {
-        nextTitle.textContent = '?????轅붽틓??熬곥끇釉띄춯誘좊????????쇨덧??;
+        nextTitle.textContent = '재생 목록 없음';
     }
 }
 
@@ -661,7 +661,7 @@ function savePlaylist() {
 
 function addVideo() {
     const url = document.getElementById('urlInput').value;
-    const title = document.getElementById('titleInput').value || '?????????;
+    const title = document.getElementById('titleInput').value || '새 비디오';
     let videoId = url;
     if (url.includes('v=')) videoId = url.split('v=')[1];
     else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1];
@@ -676,9 +676,9 @@ function addVideo() {
         updatePlaylistUI();
         updateNextVideoUI();
         document.getElementById('urlInput').value = '';
-        alert('????살퓢????癲???????');
+        alert('추가되었습니다.');
     } else {
-        alert('????癲?ID/URL???????⑤챷竊??癲ル슢?ｅ젆???');
+        alert('올바른 ID/URL을 입력하세요.');
     }
 }
 
@@ -778,6 +778,14 @@ function updateTimerDisplay() {
     const s = (totalExerciseTime % 60).toString().padStart(2, '0');
 
     timerDiv.textContent = `${h}:${m}:${s}`;
+}
+
+function resetTimer() {
+    if (confirm('운동 시간을 초기화하시겠습니까?')) {
+        totalExerciseTime = 0;
+        localStorage.setItem(STORAGE_KEYS.EXERCISE_TIME, 0);
+        updateTimerDisplay();
+    }
 }
 
 /* =========================================
@@ -891,6 +899,7 @@ window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 window.onPlayerReady = onPlayerReady;
 window.onPlayerStateChange = onPlayerStateChange;
 window.onPlayerError = onPlayerError;
+window.resetTimer = resetTimer;
 
 // Inject YouTube API Script dynamically to ensure callback is ready
 const tag = document.createElement('script');

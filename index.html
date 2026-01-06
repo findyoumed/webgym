@@ -25,7 +25,8 @@
             <button class="refresh-overlay" onclick="location.reload()" title="새로고침">
                 <span class="material-symbols-outlined">refresh</span>
             </button>
-            <div id="exerciseTimer" class="timer-overlay">00:00:00</div>
+            <div id="exerciseTimer" class="timer-overlay" ondblclick="resetTimer()" title="더블 클릭하여 시간 초기화"
+                style="cursor: pointer;">00:00:00</div>
             <div id="scoreDisplay" class="score-overlay" style="display: none;">SCORE: 0</div>
         </div>
 
