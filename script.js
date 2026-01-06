@@ -830,7 +830,7 @@ function startPoseDetection() {
     const webcam = document.getElementById('webcam');
     const canvas = document.getElementById('output_canvas');
     const ctx = canvas.getContext('2d');
-    const scoreDisplay = document.getElementById('scoreDisplay');
+    const scoreDisplay = document.getElementById('score');
 
     canvas.width = webcam.videoWidth || 1280;
     canvas.height = webcam.videoHeight || 720;
@@ -876,7 +876,7 @@ function startPoseDetection() {
 function stopPoseDetection() {
     isPoseTracking = false;
     const canvas = document.getElementById('output_canvas');
-    const scoreDisplay = document.getElementById('scoreDisplay');
+    const scoreDisplay = document.getElementById('score');
 
     if (canvas) canvas.style.display = 'none';
     if (scoreDisplay) scoreDisplay.style.display = 'none';
